@@ -1,0 +1,100 @@
+---
+title: "`phyr`: An R package for model-based phylogenetic analyses"
+author: "Daijiang Li, Russell Dinnage, Lucas Nell, Anthony Ives"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  bookdown::html_document2:
+    number_sections: no
+    theme: readable
+    toc: yes
+  bookdown::word_document2: 
+    toc: no
+  bookdown::tufte_html2:
+    number_sections: no
+    toc: yes
+fontsize: 12pt
+link-citations: yes
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/methods-in-ecology-and-evolution.csl
+bibliography: ref.bib
+---
+
+```{r knitr_options, include = FALSE}
+if(!require("xfun")) devtools::install_github("yihui/xfun")
+if(!require("phyr")) devtools::install_github("daijiang/phyr")
+xfun::pkg_attach2(c("knitr", "kableExtra", "dplyr"))
+# opts_knit$set(root.dir = normalizePath("../"))
+opts_chunk$set(fig.align='center', cache = FALSE, warning = FALSE, 
+               message = FALSE, echo = TRUE)
+options(digits = 3, width = 88)
+```
+
+To render the Rmd file into HTML file, go to Terminal, `cd` change directory to the folder of this manuscript, then type `make`. Then you browser should open the file for you after it is done. You can render to MS Word with `make ms.docx` too if you want (I see no reason for this...)
+
+Note about how to insert citation:
+
+1. Go to [Google Scholar](https://scholar.google.com); click the top left, and select `Settings`; then in the `Bibliography manager` section, check `show links to import citations into BibTeX`, then Save it.
+2. Back to the Google Scholar homepage and search the paper you want to cite. E.g. "Generalized linear mixed models for phylogenetic analyses of community structure", under the item, click `Import into BibTeX`; then copy the whole new page (`Cmd + A` then `Cmd + C`).
+
+    ```
+    @article{ives2011generalized,
+      title={Generalized linear mixed models for phylogenetic analyses of community structure},
+      author={Ives, Anthony R and Helmus, Matthew R},
+      journal={Ecological Monographs},
+      volume={81},
+      number={3},
+      pages={511--525},
+      year={2011},
+      publisher={Wiley Online Library}
+    }
+    ```
+
+3. Open the `ref.bib` in this folder, and paste the citation information there.
+4. To cite the paper in the manuscript, copy its key (e.g. `ives2011generalized` here), and inset `[@ives2011generalized]` to where you want to cite it. For multiple papers, use `[@key1; @key2]`.
+5. That's it.
+
+Running Title: Model-based phylogenetic analyses
+
+*Summary*
+
+1. Phylogenetic relationships among species are both a challenge and an opportunity for community ecology and comparative biology. Model-based phylogenetic analysis has advantages ... Currently, R functions to conduct these analyses were distributed across different packages and were mostly written in R, which can be very slow with large datasets.
+2. To help remedy this situation, we created `phyr`, an R package that collects and updates functions to conduct model-based phylogenetic analyses. By collecting these functions into one package and rewrite core functions in c++, this package can facilitate the use of model-based phylogenetic analyses.
+3. This paper presents the main functions of the package and provides an example using simulated data.
+4. The `phyr` package provides a unified software environment with improved performance to conduct model-based phylogenetic analyses.
+
+# Introduction
+
+(2-3 paragraphs)
+
+Phylogenetic relationships: importance and challenges
+
+Model-based methods for phylogenetic analysis: advantages
+
+The need of an R package to facilitate model-based phylogenetic analysis
+
+Example of citations: [@r2017], [@ives2011generalized]
+
+# Package architecture
+
+A table with all main functions
+
+Then brief introduction of each topic
+
+## Phylogenetic diversity
+
+## Cor_phy
+
+## Phylogenetic Generalized Linear Mixed Models
+
+### ML
+
+### Bayes
+
+### Other functions 
+
+Such as `communityPGLMM.plot.re()`.
+
+# Example analysis
+
+# Conclusion
+
+# References
