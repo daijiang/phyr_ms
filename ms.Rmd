@@ -73,6 +73,8 @@ The need of an R package to facilitate model-based phylogenetic analysis
 
 Example of citations: [@r2017], [@ives2011generalized]
 
+Testing citation of Tony's new book [Dinnage]: [@ives2018book] (BTW, n.p. means No Place, and Author is in place of publisher, since the book is self-published)
+
 # Package architecture
 
 A table with all main functions
