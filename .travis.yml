@@ -13,7 +13,7 @@ before_install:
   - git config --global user.name "daijiang"
   
 script:
-  - make ms.html
+  - Rscript -e 'rmarkdown::render("$(<F)", output_format = "bookdown::html_document2")'
   
 after_success:
   - git add --all *
