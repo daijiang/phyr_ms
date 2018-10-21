@@ -4,3 +4,5 @@
 .Ruserdata
 example_papers
 *.docx
+.DS_Store
+*/.DS_Store
