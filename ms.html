@@ -345,25 +345,6 @@ $(document).ready(function () {
 </ul>
 </div>
 
-<p>To render the Rmd file into HTML file, go to Terminal, <code>cd</code> change directory to the folder of this manuscript, then type <code>make</code>. Then you browser should open the file for you after it is done. You can render to MS Word with <code>make ms.docx</code> too if you want (I see no reason for this…)</p>
-<p>Note about how to insert citation:</p>
-<ol style="list-style-type: decimal">
-<li>Go to <a href="https://scholar.google.com">Google Scholar</a>; click the top left, and select <code>Settings</code>; then in the <code>Bibliography manager</code> section, check <code>show links to import citations into BibTeX</code>, then Save it.</li>
-<li><p>Back to the Google Scholar homepage and search the paper you want to cite. E.g. “Generalized linear mixed models for phylogenetic analyses of community structure”, under the item, click <code>Import into BibTeX</code>; then copy the whole new page (<code>Cmd + A</code> then <code>Cmd + C</code>).</p>
-<pre><code>@article{ives2011generalized,
-  title={Generalized linear mixed models for phylogenetic analyses of community structure},
-  author={Ives, Anthony R and Helmus, Matthew R},
-  journal={Ecological Monographs},
-  volume={81},
-  number={3},
-  pages={511--525},
-  year={2011},
-  publisher={Wiley Online Library}
-}</code></pre></li>
-<li>Open the <code>ref.bib</code> in this folder, and paste the citation information there.</li>
-<li>To cite the paper in the manuscript, copy its key (e.g. <code>ives2011generalized</code> here), and inset <code>[@ives2011generalized]</code> to where you want to cite it. For multiple papers, use <code>[@key1; @key2]</code>.</li>
-<li><p>That’s it.</p></li>
-</ol>
 <p>Running Title: Model-based phylogenetic analyses</p>
 <p><em>Summary</em></p>
 <ol style="list-style-type: decimal">
