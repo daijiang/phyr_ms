@@ -1,0 +1,18 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+latex: false
+cache: packages
+
+before_install:
+  - git config --global user.email "daijianglee@gmail.com"
+  - git config --global user.name "daijiang"
+  
+script:
+  - make
+  
+after_success:
+  - git add --all *
+  - git commit -m "update ms.html"
+  - git push -q https://${github_token}@github.com/${TRAVIS_REPO_SLUG}.git HEAD:master
