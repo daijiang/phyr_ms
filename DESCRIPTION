@@ -6,4 +6,8 @@ Imports:
   knitr,
   kableExtra,
   dplyr,
-  rmarkdown
+  rmarkdown,
+  bookdown
+Remotes: 
+  yihui/xfun,
+  daijiang/phyr
