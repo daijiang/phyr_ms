@@ -18,4 +18,4 @@ script:
 after_success:
   - git add --all *
   - git commit -m "update ms.html"
-  - git push -q https://${github_token}@github.com/${TRAVIS_REPO_SLUG}.git HEAD:master
+  - git push -q https://${GITHUB_PAT}@github.com/${TRAVIS_REPO_SLUG}.git HEAD:master
