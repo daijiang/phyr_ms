@@ -15,6 +15,7 @@ output:
     toc: yes
 fontsize: 12pt
 link-citations: yes
+always_allow_html: yes
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/methods-in-ecology-and-evolution.csl
 bibliography: ref.bib
 ---
@@ -76,10 +77,6 @@ read.csv("phyr_func.csv", check.names = FALSE) %>%
   kableExtra::column_spec(2, width = "25%")
 ```
 
-
-
-Then brief introduction of each topic
-
 ## Phylogenetic diversity
 
 The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`, and `psd`) and beta (`pcd`) diversity was imported from the R package `picante` [@kembel2010picante]. Their theoretic bases were provided by @helmus2007phylogenetic (for alpha diversity) and @ives2010phylogenetic (for pairwise beta diversity). We improved the speed of these functions by rewriting key parts of the codes with c++. We added one argument `prune.tree` to the set of phylogenetic alpha diversity functions to allow users to decide whether to prune the phylogeny before converting it into a variance-covariance matrix; its default value is `FALSE`, which means that the phylogeny will first been converted into a variance-covariance matrix; the matrix was then subsetted to the keep only the species interested. These two methods of generating the variance-covariance matrix may have different results in some situations. We set the default to `FALSE` because this may give a more accurate matrix.
@@ -92,7 +89,7 @@ The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`
 
 ## Community assembly
 
-`communityPGLMM` or `pglmm`
+The original code for `communityPGLMM` were imported from the R package `pez` [@pearse2015pez]. Its theorectical background was presented in @ives2011generalized. We improved both the user interface and the speed of `communityPGLMM` here. Function `pez::communityPGLMM` requires user-prepared random terms while `phyr::communityPGLMM` makes this step much easier by adapting formula syntax for mixed models provided by the R package `lme4` [@bates2015lme4].
 
 ### ML
 

@@ -2,7 +2,7 @@
 
 [![Travis build status](https://travis-ci.org/daijiang/phyr_ms.svg?branch=master)](https://travis-ci.org/daijiang/phyr_ms)
 
-After pushing to Github, Travis will automatically try to build the new `ms.html` file for us (it may take up to 10 mins after the push). If you changes do not affect `ms.Rmd`, append `[skip travis]` in your git commit messge to avoid rebuilding. The `ms.html` file can be viewed at here: <https://htmlpreview.github.io/?https://github.com/daijiang/phyr_ms/blob/master/ms.html>.
+After pushing to Github, Travis will automatically try to build the new `ms.html` file for us (it may take up to 10 mins after the push). If you changes do not affect `ms.Rmd`, append `[skip travis]` or `[skip ci]` in your git commit messge to avoid rebuilding. The `ms.html` file can be viewed at here: <https://htmlpreview.github.io/?https://github.com/daijiang/phyr_ms/blob/master/ms.html>.
 
 You can also update `ms.html` in your computer. To render the Rmd file into HTML file, go to Terminal, `cd` change directory to the folder of this manuscript, then type `make`. Then you browser should open the file for you after it is done. You can render to MS Word with `make ms.docx` too if you want (I see no reason for this at this stage).
 
