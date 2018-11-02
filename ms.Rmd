@@ -5,8 +5,9 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::html_document2:
     number_sections: no
-    theme: readable
+    theme: sandstone
     toc: yes
+    css: style.css
   bookdown::word_document2: 
     toc: no
   bookdown::tufte_html2:
@@ -21,11 +22,23 @@ bibliography: ref.bib
 ```{r knitr_options, include = FALSE}
 if(!require("xfun")) devtools::install_github("yihui/xfun")
 if(!require("phyr")) devtools::install_github("daijiang/phyr")
-xfun::pkg_attach2(c("knitr", "kableExtra", "kableExtra", "dplyr"))
+xfun::pkg_attach2(c("phyr", "knitr", "kableExtra", "kableExtra", "tidyverse"))
 # opts_knit$set(root.dir = normalizePath("../"))
 opts_chunk$set(fig.align='center', cache = FALSE, warning = FALSE, 
                message = FALSE, echo = TRUE)
 options(digits = 3, width = 88, knitr.kable.NA = '')
+
+comm = phyr::comm_a
+set.seed(1234)
+comm = comm[sample(nrow(comm), 5), sample(ncol(comm), 5)]
+comm$site = row.names(comm)
+dat = tidyr::gather(comm, key = "sp", value = "freq", -site) %>% 
+  left_join(phyr::envi, by = "site") %>% 
+  left_join(phyr::traits, by = "sp")
+dat$pa = as.numeric(dat$freq > 0)
+dat$freq2 = 20 - dat$freq
+pglmm_example = phyr::communityPGLMM(freq ~ 1 + shade + (1 | sp__) + (1 | site) + (1 | sp__@site), 
+                     data = dat, tree = phyr::phylotree)
 ```
 
 Running Title: Model-based phylogenetic analyses
@@ -47,13 +60,11 @@ Model-based methods for phylogenetic analysis: advantages
 
 The need of an R package to facilitate model-based phylogenetic analysis
 
-Example of citations: [@r2017], [@ives2011generalized]
-
-Testing citation of Tony's new book [Dinnage]: [@ives2018book] (BTW, n.p. means No Place, and Author is in place of publisher, since the book is self-published)
+Example of citations: [@r2017], [@ives2011generalized; @ives2018book]
 
 # Package architecture
 
-Main functions provided by `phyr` can be found in Table \@ref(tab:mainFunc).
+Main functions in `phyr` can be categorized into three groups (Table \@ref(tab:mainFunc)): A) phylogenetic diversity (alpha and beta), B) species' characteristics (e.g. correlations among traits, relationships between traits and environmental variables), and C) community assembly.
 
 (ref:maunFuncCaption) Main functions in `phyr`.
 
@@ -62,7 +73,7 @@ read.csv("phyr_func.csv", check.names = FALSE) %>%
   knitr::kable(caption = "(ref:maunFuncCaption)", booktab = T) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "scale_down", "hover"),
                 latex_options = c("striped")) %>% 
-  kableExtra::column_spec(1, width = "20%")
+  kableExtra::column_spec(2, width = "25%")
 ```
 
 
@@ -71,19 +82,32 @@ Then brief introduction of each topic
 
 ## Phylogenetic diversity
 
-## Cor_phy
+The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`, and `psd`) and beta (`pcd`) diversity was imported from the R package `picante` [@kembel2010picante]. Their theoretic bases were provided by @helmus2007phylogenetic (for alpha diversity) and @ives2010phylogenetic (for pairwise beta diversity). We improved the speed of these functions by rewriting key parts of the codes with c++. We added one argument `prune.tree` to the set of phylogenetic alpha diversity functions to allow users to decide whether to prune the phylogeny before converting it into a variance-covariance matrix; its default value is `FALSE`, which means that the phylogeny will first been converted into a variance-covariance matrix; the matrix was then subsetted to the keep only the species interested. These two methods of generating the variance-covariance matrix may have different results in some situations. We set the default to `FALSE` because this may give a more accurate matrix.
 
-## Phylogenetic Generalized Linear Mixed Models
+## Species' characteristics 
 
+`cor_phy`
 
+`binaryPGLMM`
+
+## Community assembly
+
+`communityPGLMM` or `pglmm`
 
 ### ML
 
 ### Bayes
 
-### Other functions 
+### Other help functions 
 
-Such as `communityPGLMM.plot.re()`.
+Such as `communityPGLMM.plot.re()`. We can use it to show the design matrices' structures of random terms in `communityPGLMM()`. An example can be shown in Figure \@ref(fig:reStructure).
+
+(ref:reStructureCaption) A figure to show the structures of design matrices of random terms in `communityPGLMM`.
+
+```{r reStructure, fig.width=6, fig.height=6, fig.cap="(ref:reStructureCaption)"}
+communityPGLMM.plot.re(x = pglmm_example, show.image = TRUE, show.sim.image = FALSE)
+```
+
 
 # Example analysis
 
