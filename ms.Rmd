@@ -21,11 +21,11 @@ bibliography: ref.bib
 ```{r knitr_options, include = FALSE}
 if(!require("xfun")) devtools::install_github("yihui/xfun")
 if(!require("phyr")) devtools::install_github("daijiang/phyr")
-xfun::pkg_attach2(c("knitr", "kableExtra", "dplyr"))
+xfun::pkg_attach2(c("knitr", "kableExtra", "kableExtra", "dplyr"))
 # opts_knit$set(root.dir = normalizePath("../"))
 opts_chunk$set(fig.align='center', cache = FALSE, warning = FALSE, 
                message = FALSE, echo = TRUE)
-options(digits = 3, width = 88)
+options(digits = 3, width = 88, knitr.kable.NA = '')
 ```
 
 Running Title: Model-based phylogenetic analyses
@@ -53,7 +53,19 @@ Testing citation of Tony's new book [Dinnage]: [@ives2018book] (BTW, n.p. means 
 
 # Package architecture
 
-A table with all main functions
+Main functions provided by `phyr` can be found in Table \@ref(tab:mainFunc).
+
+(ref:maunFuncCaption) Main functions in `phyr`.
+
+```{r mainFunc, echo=FALSE}
+read.csv("phyr_func.csv", check.names = FALSE) %>% 
+  knitr::kable(caption = "(ref:maunFuncCaption)", booktab = T) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "scale_down", "hover"),
+                latex_options = c("striped")) %>% 
+  kableExtra::column_spec(1, width = "20%")
+```
+
+
 
 Then brief introduction of each topic
 
@@ -62,6 +74,8 @@ Then brief introduction of each topic
 ## Cor_phy
 
 ## Phylogenetic Generalized Linear Mixed Models
+
+
 
 ### ML
 

@@ -1,0 +1,6 @@
+Main Functions,Brief Description
+psv; pse; psr; psc; psd,Phylogenetic alpha diversity of communities
+pcd,Pairwise phylogenetic beta diversity of communities
+cor_phylo,
+binaryPGLMM,
+communityPGLMM,"Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g., species composition across sites; bipartite interactions)"
