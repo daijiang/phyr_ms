@@ -89,7 +89,12 @@ The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`
 
 ## Community assembly
 
-The original code for `communityPGLMM` were imported from the R package `pez` [@pearse2015pez]. Its theorectical background was presented in @ives2011generalized. We improved both the user interface and the speed of `communityPGLMM` here. Function `pez::communityPGLMM` requires user-prepared random terms while `phyr::communityPGLMM` makes this step much easier by adapting formula syntax for mixed models provided by the R package `lme4` [@bates2015lme4].
+The original code for `communityPGLMM` were imported from the R package `pez` [@pearse2015pez]. Its theorectical background was presented in @ives2011generalized. We made several important updates here. 
+
+- First, function `pez::communityPGLMM` requires user-prepared random terms while `phyr::communityPGLMM` makes this step much easier by adapting formula syntax for mixed models provided by the R package `lme4` [@bates2015lme4]. To specify a random term with design matrix derived from a phylogenetic variance-covariance matrix, we can append two underscores (`__`) to the group variable. For example, `(1 | sp__)` will create *two* random terms: one with and one without (i.e. identity matrix) phylogenetic design matrix. To test whether closely related species are more or less likely to co-occur in the same site, we can use `(sp__@site)` along with the argument `repulsion = TRUE` (overdispersion) or `repulsion = FALSE` (underdispersion).
+- Second, we extended `communityPGLMM` to work with Binomial and Poisson distributed data while `pez::communityPGLMM` only allows Binary and Gaussian data.
+- Third, we provided both Maximum likelihood and Bayesian approaches to fit PGLMMs. Users can choose the approach via `bayes = TRUE` or `bayes = FALSE` (default). The Bayesian PGLMMs were fitted with integrated nested Laplace approximations [INLA, @rue2009approximate].
+- Fourth, we improved the speed of `communityPGLMM` by rewriting key functions in c++.
 
 ### ML
 
@@ -105,6 +110,9 @@ Such as `communityPGLMM.plot.re()`. We can use it to show the design matrices' s
 communityPGLMM.plot.re(x = pglmm_example, show.image = TRUE, show.sim.image = FALSE)
 ```
 
+### Speed comparisons
+
+A table to compare the speed of functions in `phyr` with their original versions.
 
 # Example analysis
 
