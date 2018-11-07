@@ -331,7 +331,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore"><code>phyr</code>: An R package for model-based phylogenetic analyses</h1>
 <h4 class="author"><em>Daijiang Li, Russell Dinnage, Lucas Nell, Anthony Ives</em></h4>
-<h4 class="date"><em>03 November, 2018</em></h4>
+<h4 class="date"><em>07 November, 2018</em></h4>
 
 </div>
 
@@ -342,13 +342,11 @@ $(document).ready(function () {
 <li><a href="#phylogenetic-diversity">Phylogenetic diversity</a></li>
 <li><a href="#species-characteristics">Species’ characteristics</a></li>
 <li><a href="#community-assembly">Community assembly</a><ul>
-<li><a href="#ml">ML</a></li>
-<li><a href="#bayes">Bayes</a></li>
-<li><a href="#other-help-functions">Other help functions</a></li>
 <li><a href="#speed-comparisons">Speed comparisons</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#example-analysis">Example analysis</a></li>
+<li><a href="#limitations">Limitations</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 <li><a href="#acknowledgements">Acknowledgements</a></li>
 <li><a href="#authors-contributions">Authors’ contributions</a></li>
@@ -456,27 +454,15 @@ Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g.,
 </div>
 <div id="species-characteristics" class="section level2">
 <h2>Species’ characteristics</h2>
-<p><code>cor_phy</code></p>
-<p><code>binaryPGLMM</code></p>
+<p>Two functions (<code>cor_phy</code> and <code>binaryPGLMM</code>) were included in this group. Both of them were included in the R package <code>ape</code> <span class="citation">(Paradis &amp; Schliep, <a href="#ref-ape2018">2018</a>)</span> orginally.</p>
+<p><code>cor_phy</code>: … (Lucas?)</p>
+<p><code>binaryPGLMM</code>: only 1 value per species, right?</p>
 </div>
 <div id="community-assembly" class="section level2">
 <h2>Community assembly</h2>
-<p>The original code for <code>communityPGLMM</code> were imported from the R package <code>pez</code> <span class="citation">(Pearse et al., <a href="#ref-pearse2015pez">2015</a>)</span>. Its theorectical background was presented in <span class="citation">Ives &amp; Helmus (<a href="#ref-ives2011generalized">2011</a>)</span>. We made several important updates here.</p>
-<ul>
-<li>First, function <code>pez::communityPGLMM</code> requires user-prepared random terms while <code>phyr::communityPGLMM</code> makes this step much easier by adapting formula syntax for mixed models provided by the R package <code>lme4</code> <span class="citation">(Bates, Mächler, Bolker, &amp; Walker, <a href="#ref-bates2015lme4">2015</a>)</span>. To specify a random term with design matrix derived from a phylogenetic variance-covariance matrix, we can append two underscores (<code>__</code>) to the group variable. For example, <code>(1 | sp__)</code> will create <em>two</em> random terms: one with and one without (i.e. identity matrix) phylogenetic design matrix. To test whether closely related species are more or less likely to co-occur in the same site, we can use <code>(sp__@site)</code> along with the argument <code>repulsion = TRUE</code> (overdispersion) or <code>repulsion = FALSE</code> (underdispersion).</li>
-<li>Second, we extended <code>communityPGLMM</code> to work with Binomial and Poisson distributed data while <code>pez::communityPGLMM</code> only allows Binary and Gaussian data.</li>
-<li>Third, we provided both Maximum likelihood and Bayesian approaches to fit PGLMMs. Users can choose the approach via <code>bayes = TRUE</code> or <code>bayes = FALSE</code> (default). The Bayesian PGLMMs were fitted with integrated nested Laplace approximations <span class="citation">(INLA, Rue, Martino, &amp; Chopin, <a href="#ref-rue2009approximate">2009</a>)</span>.</li>
-<li>Fourth, we improved the speed of <code>communityPGLMM</code> by rewriting key functions in c++.</li>
-</ul>
-<div id="ml" class="section level3">
-<h3>ML</h3>
-</div>
-<div id="bayes" class="section level3">
-<h3>Bayes</h3>
-</div>
-<div id="other-help-functions" class="section level3">
-<h3>Other help functions</h3>
-<p>Such as <code>communityPGLMM.plot.re()</code>. We can use it to show the design matrices’ structures of random terms in <code>communityPGLMM()</code>. An example can be shown in Figure <a href="#fig:reStructure">1</a>.</p>
+<p>The original code for <code>communityPGLMM</code> were imported from the R package <code>pez</code> <span class="citation">(Pearse et al., <a href="#ref-pearse2015pez">2015</a>)</span>. Its theorectical background was presented in <span class="citation">Ives &amp; Helmus (<a href="#ref-ives2011generalized">2011</a>)</span>. We made several important updates here. First, function <code>pez::communityPGLMM</code> requires user-prepared random terms while <code>phyr::communityPGLMM</code> makes this step much easier by adapting formula syntax for mixed models provided by the R package <code>lme4</code> <span class="citation">(Bates, Mächler, Bolker, &amp; Walker, <a href="#ref-bates2015lme4">2015</a>)</span>. To specify a random term with design matrix derived from a phylogenetic variance-covariance matrix, we can append two underscores (<code>__</code>) to the group variable. For example, <code>(1 | sp__)</code> will create <em>two</em> random terms: one with and one without (i.e. identity matrix) phylogenetic design matrix. To test whether closely related species are more or less likely to co-occur in the same site, we can use <code>(sp__@site)</code> along with the argument <code>repulsion = TRUE</code> (overdispersion) or <code>repulsion = FALSE</code> (underdispersion; default). Second, we extended <code>communityPGLMM</code> to work with Binomial and Poisson distributed data while <code>pez::communityPGLMM</code> only allows Binary and Gaussian data. Third, we provided both Maximum likelihood and Bayesian approaches to fit PGLMMs. Users can choose the approach via <code>bayes = TRUE</code> or <code>bayes = FALSE</code> (default). The Bayesian PGLMMs were fitted with integrated nested Laplace approximations (INLA) via the R package <code>r-inla</code> <span class="citation">(Rue, Martino, &amp; Chopin, <a href="#ref-rue2009approximate">2009</a>)</span>. Fourth, we improved the speed of <code>communityPGLMM</code> by rewriting key functions in c++.</p>
+<p>The function <code>communityPGLMM</code> is modularized (prepare data, design matrix, optimization, etc.). (Too much details??)</p>
+<p>The class of the model object returned is <code>communityPGLMM</code>, which has multiple methods (e.g., <code>print</code>, <code>summary</code>) associated with. Use <code>methods(class = 'communityPGLMM')</code> to see the full list. To visualize the design matrices’ structures of random terms in the model object, we can use <code>communityPGLMM.plot.re()</code>. An example can be shown in Figure <a href="#fig:reStructure">1</a>. It is also optional to simulate and plot data based on the design matrices with the argument <code>show.sim.image = TRUE</code>.</p>
 
 <pre class="r"><code>communityPGLMM.plot.re(x = pglmm_example, show.image = TRUE, show.sim.image = FALSE)</code></pre>
 <div class="figure" style="text-align: center"><span id="fig:reStructure"></span>
@@ -484,7 +470,6 @@ Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g.,
 <p class="caption">
 Figure 1: A figure to show the structures of design matrices of random terms in <code>communityPGLMM</code>.
 </p>
-</div>
 </div>
 <div id="speed-comparisons" class="section level3">
 <h3>Speed comparisons</h3>
@@ -494,6 +479,11 @@ Figure 1: A figure to show the structures of design matrices of random terms in 
 </div>
 <div id="example-analysis" class="section level1">
 <h1>Example analysis</h1>
+<p>Simulation of data; then apply the main functions.</p>
+</div>
+<div id="limitations" class="section level1">
+<h1>Limitations</h1>
+<p><code>communityPGLMM</code> requires columns <code>site</code> and <code>sp</code>.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
@@ -527,6 +517,9 @@ Figure 1: A figure to show the structures of design matrices of random terms in 
 </div>
 <div id="ref-kembel2010picante">
 <p>Kembel, S., Cowan, P., Helmus, M., Cornwell, W., Morlon, H., Ackerly, D., … Webb, C. (2010). Picante: R tools for integrating phylogenies and ecology. <em>Bioinformatics</em>, <em>26</em>, 1463–1464.</p>
+</div>
+<div id="ref-ape2018">
+<p>Paradis, E., &amp; Schliep, K. (2018). Ape 5.0: An environment for modern phylogenetics and evolutionary analyses in r. <em>Bioinformatics</em>, bty633. doi:<a href="https://doi.org/10.1093/bioinformatics/bty633">10.1093/bioinformatics/bty633</a></p>
 </div>
 <div id="ref-pearse2015pez">
 <p>Pearse, W. D., Cadotte, M. W., Cavender-Bares, J., Ives, A. R., Tucker, C. M., Walker, S. C., &amp; Helmus, M. R. (2015). Pez: Phylogenetics for the environmental sciences. <em>Bioinformatics</em>, <em>31</em>(17), 2888–2890.</p>

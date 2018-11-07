@@ -21,7 +21,7 @@ bibliography: ref.bib
 ---
 
 ```{r knitr_options, include = FALSE}
-if(!require("xfun")) devtools::install_github("yihui/xfun")
+if(!require("xfun")) install.packages("xfun")
 if(!require("phyr")) devtools::install_github("daijiang/phyr")
 xfun::pkg_attach2(c("phyr", "knitr", "kableExtra", "kableExtra", "tidyverse"))
 # opts_knit$set(root.dir = normalizePath("../"))
@@ -83,26 +83,19 @@ The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`
 
 ## Species' characteristics 
 
-`cor_phy`
+Two functions (`cor_phy` and `binaryPGLMM`) were included in this group. Both of them were included in the R package `ape` [@ape2018] orginally.
 
-`binaryPGLMM`
+`cor_phy`: ... (Lucas?)
+
+`binaryPGLMM`: only 1 value per species, right?
 
 ## Community assembly
 
-The original code for `communityPGLMM` were imported from the R package `pez` [@pearse2015pez]. Its theorectical background was presented in @ives2011generalized. We made several important updates here. 
+The original code for `communityPGLMM` were imported from the R package `pez` [@pearse2015pez]. Its theorectical background was presented in @ives2011generalized. We made several important updates here. First, function `pez::communityPGLMM` requires user-prepared random terms while `phyr::communityPGLMM` makes this step much easier by adapting formula syntax for mixed models provided by the R package `lme4` [@bates2015lme4]. To specify a random term with design matrix derived from a phylogenetic variance-covariance matrix, we can append two underscores (`__`) to the group variable. For example, `(1 | sp__)` will create *two* random terms: one with and one without (i.e. identity matrix) phylogenetic design matrix. To test whether closely related species are more or less likely to co-occur in the same site, we can use `(sp__@site)` along with the argument `repulsion = TRUE` (overdispersion) or `repulsion = FALSE` (underdispersion; default). Second, we extended `communityPGLMM` to work with Binomial and Poisson distributed data while `pez::communityPGLMM` only allows Binary and Gaussian data. Third, we provided both Maximum likelihood and Bayesian approaches to fit PGLMMs. Users can choose the approach via `bayes = TRUE` or `bayes = FALSE` (default). The Bayesian PGLMMs were fitted with integrated nested Laplace approximations (INLA) via the R package `r-inla` [@rue2009approximate]. Fourth, we improved the speed of `communityPGLMM` by rewriting key functions in c++.
 
-- First, function `pez::communityPGLMM` requires user-prepared random terms while `phyr::communityPGLMM` makes this step much easier by adapting formula syntax for mixed models provided by the R package `lme4` [@bates2015lme4]. To specify a random term with design matrix derived from a phylogenetic variance-covariance matrix, we can append two underscores (`__`) to the group variable. For example, `(1 | sp__)` will create *two* random terms: one with and one without (i.e. identity matrix) phylogenetic design matrix. To test whether closely related species are more or less likely to co-occur in the same site, we can use `(sp__@site)` along with the argument `repulsion = TRUE` (overdispersion) or `repulsion = FALSE` (underdispersion).
-- Second, we extended `communityPGLMM` to work with Binomial and Poisson distributed data while `pez::communityPGLMM` only allows Binary and Gaussian data.
-- Third, we provided both Maximum likelihood and Bayesian approaches to fit PGLMMs. Users can choose the approach via `bayes = TRUE` or `bayes = FALSE` (default). The Bayesian PGLMMs were fitted with integrated nested Laplace approximations [INLA, @rue2009approximate].
-- Fourth, we improved the speed of `communityPGLMM` by rewriting key functions in c++.
+The function `communityPGLMM` is modularized (prepare data, design matrix, optimization, etc.). (Too much details??)
 
-### ML
-
-### Bayes
-
-### Other help functions 
-
-Such as `communityPGLMM.plot.re()`. We can use it to show the design matrices' structures of random terms in `communityPGLMM()`. An example can be shown in Figure \@ref(fig:reStructure).
+The class of the model object returned is `communityPGLMM`, which has multiple methods (e.g., `print`, `summary`) associated with. Use `methods(class = 'communityPGLMM')` to see the full list. To visualize the design matrices' structures of random terms in the model object, we can use `communityPGLMM.plot.re()`. An example can be shown in Figure \@ref(fig:reStructure). It is also optional to simulate and plot data based on the design matrices with the argument `show.sim.image = TRUE`.
 
 (ref:reStructureCaption) A figure to show the structures of design matrices of random terms in `communityPGLMM`.
 
@@ -115,6 +108,12 @@ communityPGLMM.plot.re(x = pglmm_example, show.image = TRUE, show.sim.image = FA
 A table to compare the speed of functions in `phyr` with their original versions.
 
 # Example analysis
+
+Simulation of data; then apply the main functions.
+
+# Limitations
+
+`communityPGLMM` requires columns `site` and `sp`.
 
 # Conclusion
 
