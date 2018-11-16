@@ -331,7 +331,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore"><code>phyr</code>: An R package for model-based phylogenetic analyses</h1>
 <h4 class="author"><em>Daijiang Li, Russell Dinnage, Lucas Nell, Anthony Ives</em></h4>
-<h4 class="date"><em>07 November, 2018</em></h4>
+<h4 class="date"><em>16 November, 2018</em></h4>
 
 </div>
 
@@ -454,8 +454,16 @@ Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g.,
 </div>
 <div id="species-characteristics" class="section level2">
 <h2>Species’ characteristics</h2>
-<p>Two functions (<code>cor_phy</code> and <code>binaryPGLMM</code>) were included in this group. Both of them were included in the R package <code>ape</code> <span class="citation">(Paradis &amp; Schliep, <a href="#ref-ape2018">2018</a>)</span> orginally.</p>
-<p><code>cor_phy</code>: … (Lucas?)</p>
+<p>Two functions (<code>cor_phylo</code> and <code>binaryPGLMM</code>) were included in this group. Both of them were included in the R package <code>ape</code> <span class="citation">(Paradis &amp; Schliep, <a href="#ref-ape2018">2018</a>)</span> orginally.</p>
+<p>The function <code>cor_phylo</code> computes Pearson correlation coefficients for multiple continuous
+traits that may have phylogenetic signal, allowing users to also specify measurement
+error.
+The underlying methods were originally developed by <span class="citation">Zheng et al. (<a href="#ref-zheng2009new">2009</a>)</span>.
+We improved speed by writing many of the internal functions in c++,
+made the input format more flexible,
+fixed a mistake that meant measurement error was not included, and
+added two new features: parametric bootstrapping and the ability to use optimizers
+from the <code>nlopt</code> library <span class="citation">(Nelder &amp; Mead, <a href="#ref-nelder1965simplex">1965</a>; Rowan, <a href="#ref-rowan1990functional">1990</a>; Powell, <a href="#ref-powell2009bobyqa">2009</a>; Johnson, <a href="#ref-johnson2014nlopt">2014</a>)</span>.</p>
 <p><code>binaryPGLMM</code>: only 1 value per species, right?</p>
 </div>
 <div id="community-assembly" class="section level2">
@@ -515,8 +523,14 @@ Figure 1: A figure to show the structures of design matrices of random terms in 
 <div id="ref-ives2011generalized">
 <p>Ives, A. R., &amp; Helmus, M. R. (2011). Generalized linear mixed models for phylogenetic analyses of community structure. <em>Ecological Monographs</em>, <em>81</em>(3), 511–525.</p>
 </div>
+<div id="ref-johnson2014nlopt">
+<p>Johnson, S. G. (2014). The nlopt nonlinear-optimization package. <a href="http://ab-initio.mit.edu/nlopt" class="uri">http://ab-initio.mit.edu/nlopt</a>.</p>
+</div>
 <div id="ref-kembel2010picante">
 <p>Kembel, S., Cowan, P., Helmus, M., Cornwell, W., Morlon, H., Ackerly, D., … Webb, C. (2010). Picante: R tools for integrating phylogenies and ecology. <em>Bioinformatics</em>, <em>26</em>, 1463–1464.</p>
+</div>
+<div id="ref-nelder1965simplex">
+<p>Nelder, J. A., &amp; Mead, R. (1965). A simplex method for function minimization. <em>The Computer Journal</em>, <em>7</em>(4), 308–313.</p>
 </div>
 <div id="ref-ape2018">
 <p>Paradis, E., &amp; Schliep, K. (2018). Ape 5.0: An environment for modern phylogenetics and evolutionary analyses in r. <em>Bioinformatics</em>, bty633. doi:<a href="https://doi.org/10.1093/bioinformatics/bty633">10.1093/bioinformatics/bty633</a></p>
@@ -524,11 +538,20 @@ Figure 1: A figure to show the structures of design matrices of random terms in 
 <div id="ref-pearse2015pez">
 <p>Pearse, W. D., Cadotte, M. W., Cavender-Bares, J., Ives, A. R., Tucker, C. M., Walker, S. C., &amp; Helmus, M. R. (2015). Pez: Phylogenetics for the environmental sciences. <em>Bioinformatics</em>, <em>31</em>(17), 2888–2890.</p>
 </div>
+<div id="ref-powell2009bobyqa">
+<p>Powell, M. J. (2009). The bobyqa algorithm for bound constrained optimization without derivatives. <em>Cambridge NA Report NA2009/06, University of Cambridge, Cambridge</em>, 26–46.</p>
+</div>
 <div id="ref-r2017">
 <p>R Core Team. (2017). <em>R: A language and environment for statistical computing</em>. Vienna, Austria: R Foundation for Statistical Computing. Retrieved from <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a></p>
 </div>
+<div id="ref-rowan1990functional">
+<p>Rowan, T. H. (1990). <em>Functional stability analysis of numerical algorithms</em> (PhD thesis). University of Texas at Austin, Austin, TX, USA.</p>
+</div>
 <div id="ref-rue2009approximate">
 <p>Rue, H., Martino, S., &amp; Chopin, N. (2009). Approximate bayesian inference for latent gaussian models by using integrated nested laplace approximations. <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, <em>71</em>(2), 319–392.</p>
+</div>
+<div id="ref-zheng2009new">
+<p>Zheng, L., Ives, A. R., Garland, T., Larget, B. R., Yu, Y., &amp; Cao, K. (2009). New multivariate tests for phylogenetic signal and trait correlations applied to ecophysiological phenotypes of nine <em>manglietia</em> species. <em>Functional Ecology</em>, <em>23</em>(6), 1059–1069.</p>
 </div>
 </div>
 </div>
