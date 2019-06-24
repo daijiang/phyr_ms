@@ -30,16 +30,15 @@ opts_chunk$set(fig.align='center', cache = FALSE, warning = FALSE,
 options(digits = 3, width = 88, knitr.kable.NA = '')
 
 comm = phyr::comm_a
-set.seed(1234)
-comm = comm[sample(nrow(comm), 5), sample(ncol(comm), 5)]
 comm$site = row.names(comm)
+# add site environmental data and species traits
 dat = tidyr::gather(comm, key = "sp", value = "freq", -site) %>% 
   left_join(phyr::envi, by = "site") %>% 
   left_join(phyr::traits, by = "sp")
 dat$pa = as.numeric(dat$freq > 0)
 dat$freq2 = 20 - dat$freq
 pglmm_example = phyr::communityPGLMM(freq ~ 1 + shade + (1 | sp__) + (1 | site) + (1 | sp__@site), 
-                     data = dat, tree = phyr::phylotree)
+                     data = dat, cov_ranef = list(sp = phyr::phylotree))
 ```
 
 Running Title: Model-based phylogenetic analyses
@@ -49,7 +48,7 @@ Running Title: Model-based phylogenetic analyses
 1. Phylogenetic relationships among species are both a challenge and an opportunity for community ecology and comparative biology. Model-based phylogenetic analysis has advantages ... Currently, R functions to conduct these analyses were distributed across different packages and were mostly written in R, which can be very slow with large datasets.
 2. To help remedy this situation, we created `phyr`, an R package that collects and updates functions to conduct model-based phylogenetic analyses. By collecting these functions into one package and rewrite core functions in c++, this package can facilitate the use of model-based phylogenetic analyses.
 3. This paper presents the main functions of the package and provides an example using simulated data.
-4. The `phyr` package provides a unified software environment with improved performance to conduct model-based phylogenetic analyses.
+4. The `phyr` package provides a unified software environment with improved performance to conduct model-based phylogenetic analyses in Ecology. 
 
 # Introduction
 
@@ -67,7 +66,7 @@ Example of citations: [@r2017], [@ives2011generalized; @ives2018book]
 
 Main functions in `phyr` can be categorized into three groups (Table \@ref(tab:mainFunc)): A) phylogenetic diversity (alpha and beta), B) species' characteristics (e.g. correlations among traits, relationships between traits and environmental variables), and C) community assembly.
 
-(ref:maunFuncCaption) Main functions in `phyr`.
+(ref:maunFuncCaption) List of main functions in `phyr` package.
 
 ```{r mainFunc, echo=FALSE}
 read.csv("phyr_func.csv", check.names = FALSE) %>% 
@@ -81,23 +80,11 @@ read.csv("phyr_func.csv", check.names = FALSE) %>%
 
 The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`, and `psd`) and beta (`pcd`) diversity was imported from the R package `picante` [@kembel2010picante]. Their theoretic bases were provided by @helmus2007phylogenetic (for alpha diversity) and @ives2010phylogenetic (for pairwise beta diversity). We improved the speed of these functions by rewriting key parts of the codes with c++. We added one argument `prune.tree` to the set of phylogenetic alpha diversity functions to allow users to decide whether to prune the phylogeny before converting it into a variance-covariance matrix; its default value is `FALSE`, which means that the phylogeny will first been converted into a variance-covariance matrix; the matrix was then subsetted to the keep only the species interested. These two methods of generating the variance-covariance matrix may have different results in some situations. We set the default to `FALSE` because this may give a more accurate matrix.
 
-## Species' characteristics 
+## Species' traits 
 
 Two functions (`cor_phylo` and `binaryPGLMM`) were included in this group. Both of them were included in the R package `ape` [@ape2018] orginally.
 
-
-
-The function `cor_phylo` computes Pearson correlation coefficients for multiple continuous
-traits that may have phylogenetic signal, allowing users to also specify measurement
-error.
-The underlying methods were originally developed by @zheng2009new.
-We improved speed by writing many of the internal functions in c++,
-made the input format more flexible,
-fixed a mistake that meant measurement error was not included, and
-added two new features: parametric bootstrapping and the ability to use optimizers
-from the `nlopt` library [@johnson2014nlopt; @powell2009bobyqa; @nelder1965simplex; @rowan1990functional].
-
-
+The function `cor_phylo` computes Pearson correlation coefficients for multiple continuous traits that may have phylogenetic signal, allowing users to also specify measurement error. The underlying methods were originally developed by @zheng2009new. We improved speed by writing many of the internal functions in c++, made the input format more flexible, fixed a mistake that meant measurement error was not included, and added two new features: parametric bootstrapping and the ability to use optimizers from the `nlopt` library [@johnson2014nlopt; @powell2009bobyqa; @nelder1965simplex; @rowan1990functional]. 
 
 `binaryPGLMM`: only 1 value per species, right?
 
@@ -115,19 +102,96 @@ The class of the model object returned is `communityPGLMM`, which has multiple m
 communityPGLMM.plot.re(x = pglmm_example, show.image = TRUE, show.sim.image = FALSE)
 ```
 
-### Speed comparisons
-
-A table to compare the speed of functions in `phyr` with their original versions.
-
 # Example analysis
 
 Simulation of data; then apply the main functions.
 
-# Limitations
+## Phylogenetic diversity
 
-`communityPGLMM` requires columns `site` and `sp`.
+```{r}
+tree = phyr::phylotree
+phyr::psv(comm_b, tree) # comm_b is a site by species matrix
+phyr::psd(comm_b, tree)
+x = phyr::pcd(comm_b, tree, verbose = FALSE)
+```
 
-# Conclusion
+## Species' traits
+
+
+## Community assembly
+
+```{r}
+pglmm_example
+```
+
+# Benchmark
+
+A table to compare the speed of functions in `phyr` with their original versions.
+
+```{r, echo=FALSE}
+# data prep for pez::communityPGLMM, not necessary for phyr::communityPGLMM
+dat = arrange(dat, site, sp)
+nspp = n_distinct(dat$sp)
+nsite = n_distinct(dat$site)
+
+dat$site = as.factor(dat$site)
+dat$sp = as.factor(dat$sp)
+
+tree = ape::drop.tip(phylotree, setdiff(phylotree$tip.label, unique(dat$sp)))
+Vphy <- ape::vcv(tree)
+Vphy <- Vphy/max(Vphy)
+Vphy <- Vphy/exp(determinant(Vphy)$modulus[1]/nspp)
+Vphy = Vphy[levels(dat$sp), levels(dat$sp)]
+
+# prepare random effects
+re.site <- list(1, site = dat$site, covar = diag(nsite))
+re.sp <- list(1, sp = dat$sp, covar = diag(nspp))
+re.sp.phy <- list(1, sp = dat$sp, covar = Vphy)
+# sp is nested within site
+re.nested.phy <- list(1, sp = dat$sp, covar = Vphy, site = dat$site)
+re.nested.rep <- list(1, sp = dat$sp, covar = solve(Vphy), site = dat$site) # equal to sp__@site
+# can be named 
+re = list(re.sp = re.sp, re.sp.phy = re.sp.phy, re.nested.phy = re.nested.phy, re.site = re.site)
+```
+
+
+```{r eval=T}
+microbenchmark::microbenchmark(phyr::pcd(comm = comm_a, tree = phylotree, reps = 1000, verbose = F),
+                               picante::pcd(comm = comm_a, tree = phylotree, reps = 1000),
+                               times = 30)
+rt = ape::rtree(n = 1000)
+microbenchmark::microbenchmark(phyr::vcv2(rt, corr = T),
+                               ape::vcv(rt, corr = T))
+
+microbenchmark::microbenchmark(phyr::psv(comm_a, phylotree, compute.var = T),
+                               picante::psv(comm_a, phylotree, compute.var = T))
+
+microbenchmark::microbenchmark(
+  phyr::communityPGLMM(pa ~ 1 + shade + (1|sp__) + (1|site) + (1|sp__@site), dat, 
+                       family = "binomial", cov_ranef = list(sp = phylotree), REML = F, cpp = T, 
+                       optimizer = "bobyqa"),
+    phyr::communityPGLMM(pa ~ 1 + shade + (1|sp__) + (1|site) + (1|sp__@site), dat, 
+                       family = "binomial", cov_ranef = list(sp = phylotree), REML = F, cpp = T, 
+                       optimizer = "Nelder-Mead"),
+  phyr::communityPGLMM(pa ~ 1 + shade + (1|sp__) + (1|site) + (1|sp__@site), dat, 
+                       family = "binomial", cov_ranef = list(sp = phylotree), REML = F, cpp = F, 
+                       optimizer = "Nelder-Mead"),
+  pez::communityPGLMM(pa ~ 1 + shade, data = dat, family = "binomial", sp = dat$sp, 
+                      site = dat$site, random.effects = re, REML = F),
+  times = 10
+)
+```
+
+
+# Implications
+
+# Resources
+
+This package is available at Github.
+
+# Future directions
+
+In the future, we intend to ...
 
 # Acknowledgements
 
