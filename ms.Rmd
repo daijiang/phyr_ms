@@ -1,5 +1,5 @@
 ---
-title: "`phyr`: An R package for model-based phylogenetic analyses"
+title: "`phyr`: An R package for model-based phylogenetic analyses in community ecology"
 author: "Daijiang Li, Russell Dinnage, Lucas Nell, Anthony Ives"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -54,9 +54,11 @@ Running Title: Model-based phylogenetic analyses
 
 (2-3 paragraphs)
 
+An ecological community contains multiple species occupying the same geographical area, with all species evolved from the same common ancestor. Therefore, for almost every question about ecological community, we need to consider the evolutionary history of species within that community. For some questions, it is statistically necessary to do so [citations]; for other questions, evolutionary relationships among species can provide additional insights about the ecological community [citations]. Consequently, studies in community ecology that involve phylogenies increased exponentially over the past decades [citations]. Most of these studies fall into one or more of the following groups: 1) phylogenetic diversity of the community, 2) comparative studies of species' traits and their relationships with each other as well as environmental conditions, and 3) community assembly patterns and processes. 
+
 Phylogenetic relationships: importance and challenges
 
-Model-based methods for phylogenetic analysis: advantages
+Model-based methods for phylogenetic analysis: advantages and challenges
 
 The need of an R package to facilitate model-based phylogenetic analysis
 
@@ -64,7 +66,7 @@ Example of citations: [@r2017], [@ives2011generalized; @ives2018book]
 
 # Package architecture
 
-Main functions in `phyr` can be categorized into three groups (Table \@ref(tab:mainFunc)): A) phylogenetic diversity (alpha and beta), B) species' characteristics (e.g. correlations among traits, relationships between traits and environmental variables), and C) community assembly.
+`phyr` is written in R and C++. Most of the functions in `phyr` have been included in other R packages. However, the original versions were all written in pure R and thus are relatively slow. Furthermore, methods behind these functional were developed in the same theoretic framework. It makes more sense to combine them together: thus the `phyr` package. Main functions in `phyr` received new major updates and developments and can be categorized into three groups (Table \@ref(tab:mainFunc)): A) phylogenetic diversity (alpha and beta), B) species' traits (e.g. correlations among traits, relationships between traits and environmental variables), and C) community assembly.
 
 (ref:maunFuncCaption) List of main functions in `phyr` package.
 
