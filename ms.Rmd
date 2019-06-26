@@ -84,7 +84,7 @@ The set of functions to calculate phylogenetic alpha (`psv`, `pse`, `psr`, `psc`
 
 ## Species' traits 
 
-Two functions (`cor_phylo` and `binaryPGLMM`) were included in this group. Both of them were included in the R package `ape` [@ape2018] orginally.
+Two functions (`cor_phylo` and `binaryPGLMM`) were included in this group. Both of them were included in the R package `ape` [@ape2018] originally.
 
 The function `cor_phylo` computes Pearson correlation coefficients for multiple continuous traits that may have phylogenetic signal, allowing users to also specify measurement error. The underlying methods were originally developed by @zheng2009new. We improved speed by writing many of the internal functions in c++, made the input format more flexible, fixed a mistake that meant measurement error was not included, and added two new features: parametric bootstrapping and the ability to use optimizers from the `nlopt` library [@johnson2014nlopt; @powell2009bobyqa; @nelder1965simplex; @rowan1990functional]. 
 
@@ -157,7 +157,7 @@ re = list(re.sp = re.sp, re.sp.phy = re.sp.phy, re.nested.phy = re.nested.phy, r
 ```
 
 
-```{r eval=T}
+```{r eval=F}
 microbenchmark::microbenchmark(phyr::pcd(comm = comm_a, tree = phylotree, reps = 1000, verbose = F),
                                picante::pcd(comm = comm_a, tree = phylotree, reps = 1000),
                                times = 30)
