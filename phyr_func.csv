@@ -4,4 +4,4 @@ A,`psv`; `pse`; `psr`; `psc`; `psd`,Phylogenetic alpha diversity of communities
 ,`vcv2`,"Convert a phylogeny to a var-cov matrix, a faster version of `ape::vcv`"
 B,`cor_phylo`,Correlations among multiple traits with phylogenetic signal
 ,`binaryPGLMM`,Phylogenetic Generalized Linear Mixed Model for binary data; each species only allowed to have one value
-C,`communityPGLMM`,"Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g., species composition across sites; bipartite interactions)"
+C,`pglmm`,"Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g., species composition across sites; bipartite interactions)"
