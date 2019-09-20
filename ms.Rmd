@@ -8,7 +8,7 @@ output:
     theme: sandstone
     toc: yes
     css: style.css
-    keep_md: yes
+    keep_md: no
   bookdown::word_document2: 
     toc: no
   bookdown::tufte_html2:
@@ -37,10 +37,11 @@ Running Title: Model-based phylogenetic analyses
 
 *Summary*
 
-1. Phylogenetic relationships among species are both a challenge and an opportunity for community ecology and comparative biology. Model-based phylogenetic analysis has advantages ... Currently, R functions to conduct these analyses were distributed across different packages and were mostly written in R, which can be very slow with large datasets.
-2. To help remedy this situation, we created `phyr`, an R package that collects and updates functions to conduct model-based phylogenetic analyses. By collecting these functions into one package and rewrite core functions in c++, this package can facilitate the use of model-based phylogenetic analyses.
-3. This paper presents the main functions of the package and provides an example using simulated data.
-4. The `phyr` package provides a unified software environment with improved performance to conduct model-based phylogenetic analyses in Ecology. 
+1. Model-based approaches are getting more and more popular in ecological studies, with joint species distribution models as a particular example. However, most of such studies did not include phylogenetic relationships among species despite its well-known importance in shaping species distribution and community composition. One potential reason is the lack of tools to allow ecologists to fit phylogenetic species distribution models easily.
+2. To fill this gap, the R package `phyr` provides a general formula syntax and implementations of phylogenetic generalized linear mixed models. It also provides updated functions to calculate community phylogenetic diversity and correlations among functional traits while accounting for phylogenetic relationships.
+3. Other programs can also be used to fit phylogenetic species distribution models, though they require considerable programming and expertise. The model formula syntax we proposed here can be applied to those programs and thus serves as a unified framework for phylogenetic species distribution modelling.
+4. `phyr` can help current and future researchers formulate and analyze phylogenetic species-distribution models.
+
 
 _Keywords_: phylogenetic diversity, phylogenetic generalized linear mixed models, functional trait, trait correlation, model-based methods
 
