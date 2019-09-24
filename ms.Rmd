@@ -101,7 +101,7 @@ With `bayes = FALSE`, `pglmm()` is fit using a frequentist approach. ML or REML 
 (ref:designPlotCap) The structures of design matrices of random terms in a phylogenetic generalized linear mixed model with `r nspp` species and `r nsite` sites.
 
 ```{r designPlot, fig.cap="(ref:designPlotCap)", out.width="100%"}
-knitr::include_graphics(normalize_path("designPlot.pdf"))
+knitr::include_graphics(normalize_path("designPlot.png"))
 ```
 
 ## *`cor_phylo()`*

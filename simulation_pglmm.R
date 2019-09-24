@@ -146,7 +146,7 @@ z <- pglmm(
 #   s2.init = sqrt(z$ss)
 # )
 # 
-pdf("designPlot.pdf", width = 10, height = 10)
+png("designPlot.png", width = 10, height = 10, units = "in", res = 300)
 pglmm.plot.re(
   x = z,
   sp.var = "species",
