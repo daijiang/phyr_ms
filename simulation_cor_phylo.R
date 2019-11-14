@@ -1,6 +1,6 @@
 library(ape)
 
-set.seed(123)
+set.seed(1000)
 # Set up parameter values for simulating data
 n <- 50
 phy <- rcoal(n, tip.label = 1:n)
