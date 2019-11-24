@@ -1,7 +1,7 @@
 Group,Main Functions,Brief Description
-A,`psv`; `pse`; `psr`; `psc`; `psd`,Phylogenetic alpha diversity of communities
+Mixed Models,`pglmm`,"Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g., species composition across sites; bipartite interactions)"
+Comparative Methods,`cor_phylo`,Correlations among multiple traits with phylogenetic signal
+,`pglmm_compare`,`pglmm` tailored for comparative data in which species (tips of a phylogeny) only occur once
+Metrics,`psv`; `pse`; `psr`; `psc`; `psd`,Phylogenetic alpha diversity of communities
 ,`pcd`,Pairwise phylogenetic beta diversity of communities
 ,`vcv2`,"Convert a phylogeny to a var-cov matrix, a faster version of `ape::vcv`"
-B,`cor_phylo`,Correlations among multiple traits with phylogenetic signal
-C,`pglmm`,"Phylogenetic Generalised Linear Mixed Model for ecological community data (e.g., species composition across sites; bipartite interactions)"
-,`pglmm.compare`,`pglmm` tailored for comparative data in which species (tips of a phylogeny) only occur once
