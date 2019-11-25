@@ -136,18 +136,22 @@ dat$abund <- y + rnorm(nspp * nsite, sd = sd.resid)
 # )
 # saveRDS(z.bayes, "z.bayes.rds")
 # 
-system.time(z <- pglmm(
-  abund ~ 1 + envi + trait + envi:trait +
-    (1 | species__) + (1|site__) +
-    (envi | species__) +
-    (trait | site) +
-    (1 | species__@site),
-  data = dat,
-  cov_ranef = list(species = phy, site = Vspace),
-  s2.init = c(0, 1, 0, 1, 0, 1, 1, 1),
-  verbose = T
-))
-saveRDS(z, "z.rds")
+if(!file.exists("z.rds")){
+  z <- pglmm(
+    abund ~ 1 + envi + trait + envi:trait +
+      (1 | species__) + (1|site__) +
+      (envi | species__) +
+      (trait | site) +
+      (1 | species__@site),
+    data = dat,
+    cov_ranef = list(species = phy, site = Vspace),
+    s2.init = c(0, 1, 0, 1, 0, 1, 1, 1),
+    verbose = T
+  )
+  saveRDS(z, "z.rds")
+}
+
+
 # 
 # png("designPlot2.png", width = 10, height = 10, units = "in", res = 300)
 # pglmm.plot.re(

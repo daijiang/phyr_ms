@@ -201,23 +201,6 @@ In recent years, there has been increasing effort to apply model-based approache
 
 The model formula of `pglmm()` is general and can be applied using other tools to fit phylogenetic species-distribution models. Thus, `pglmm()` can serve the developer community as a shell for new methods that fit GLMMs, with `phyr` providing an easy user interface. Using INLA as a backend to fit a Bayesian version of the pglmm model is an example of this approach. To facilitate this end, we are developing phyr openly on github and actively encourage community contribution.We hope that the `phyr` package will help current and future researchers formulate and analyze phylogenetic species-distribution models.
 
-
-
-
-<!-- # Example analysis
-
-To demonstrate the usage of main functions in `phyr`, we simulated a dataset with 50 species and 30 communities. We first simulated a coalescent phylogeny of 50 species with function `ape::rcoal`. For each species, we then simulated one continuous functional trait along the phylogeny. We also simulated one environmental variable with all 30 communities located evenly along the gradient. Environmental variable, functional trait, and their interaction all determine the abundance of species over sites following the model below. 
-
-$$y=(\beta_{0}+b_{0})+(\beta_{1}+b_{1})envi+(\beta_{2}+b_{2})trait+(\beta_{3}+b_{3})envi*trait+e$$
-$$b_{0}\sim Gaussian(0,\sigma_{0}^{2}\Sigma_{spp})$$
-$$b_{1}\sim Gaussian(0,\sigma_{1}^{2}\Sigma_{spp})$$
-$$b_{2}\sim Gaussian(0,\sigma_{2}^{2}\Sigma_{site})$$
-$$e\sim Gaussian(0,\sigma_{e}^2)$$
-
-Here, we set all coefficients (beta_0 to beta_3) to be 1; we also set variances of all random terms to be 1. $\Sigma_{spp}$ is a variance-covariance matrix converted from the phylogeny. $\Sigma_{site}$ is an identity matrix since we treat sites as independent replications. In the above model, different species have different overall abundance (intercept) but closely related species have similar overall abundance. Abundance of different species also change differently along the environmental gradient; however, closely related species again change similarly in response to environmental change. We also included a random term for functional trait; therefore the relationship between functional traits and species abundance varied across sites independently to account for unmeasured environmental variables. For demonstration purpose, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model. However, more random terms will come with higher computational burdens and the program will take longer to finish.  -->
-  
-
-
 # Acknowledgements
 
 Funding for this work was provided by the National Science Foundation (NSF ...).
@@ -229,5 +212,23 @@ D.L and A.R.I conceived the idea. All authors wrote the software and package doc
 # Data Accessibility
 
 No data were used in this study. `phyr` is available at Github (https://github.com/daijiang/phyr) and CRAN (https://cran.r-project.org/package=phyr).
+
+# Appendix 
+
+To demonstrate the usage of main functions in phyr, we simulated a dataset with 30 species and 30 communities. We first simulated a coalescent phylogeny of 30 species with function `ape::rcoal()`. For each species, we then simulated one continuous functional trait along the phylogeny. We also simulated one environmental variable with all 30 communities located evenly along the gradient. Environmental variable, functional trait, and their interaction all determine the abundance of species over sites following the model below.
+
+$$y=(\beta_{0}+b_{0\_sp}+b_{0\_site})+(\beta_{1}+b_{1})envi+(\beta_{2}+b_{2})trait+\beta_{3}envi*trait+b_{3}+e$$
+$$b_{0\_{sp}}\sim Gaussian(0,\sigma_{0\_{sp}}^{2}\Sigma_{spp})$$
+$$b_{0\_{site}}\sim Gaussian(0,\sigma_{0\_{site}}^{2}\Sigma_{site})$$
+
+$$b_{1}\sim Gaussian(0,\sigma_{1}^{2}\Sigma_{spp})$$
+
+$$b_{2}\sim Gaussian(0,\sigma_{2}^{2}I_{site})$$
+$$b_{3}\sim Gaussian(0,\sigma_{3}^{2}\Sigma_{site}\otimes\Sigma_{spp})$$
+
+$$e\sim Gaussian(0,\sigma_{e}^2)$$
+
+Here, we set all coefficients ($\beta_0$ to $\beta_3$) to be 1; we also set variances of all random terms to be 1. $\Sigma_{spp}$ is a variance-covariance matrix converted from the phylogeny. $\Sigma_{site}$ is a vairance-covariance matrix among sites, which was converted from the site spatial distance matrix. $I_{site}$ is an identity matrix so that we treat sites as independent replications. $\Sigma_{site}\otimes\Sigma_{spp}$ a kronecker product and forces closely related species will be more likely to be observed in the same site (i.e. underdispersion). In the above model, different species have different overall abundance (intercept) but closely related species ($b_{0\_{sp}}$) and similar communities ($b_{0\_{site}}$) have similar overall abundance. Abundance of different species also change differently along the environmental gradient; however, closely related species again change similarly in response to environmental change. We included a random term for functional trait; therefore the relationship between functional traits and species abundance varied across sites independently to account for unmeasured environmental variables. For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model. However, more random terms will need more computational time to finish the model fitting.
+
 
 # References
