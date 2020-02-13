@@ -43,24 +43,24 @@ for (i in 1:nsite)
 
 range <- .25
 sd.space <- 1
-Vspace <- sd.space ^ 2 * exp(-Dist / range)
-rownames(Vspace) <- 1:nsite
-colnames(Vspace) <- 1:nsite
-Vspace <- Vspace / max(Vspace)
-Vspace <- Vspace / exp(determinant(Vspace)$modulus[1] / nsite)
-iV = t(chol(Vspace))
+V.space <- sd.space ^ 2 * exp(-Dist / range)
+rownames(V.space) <- 1:nsite
+colnames(V.space) <- 1:nsite
+V.space <- V.space / max(V.space)
+V.space <- V.space / exp(determinant(V.space)$modulus[1] / nsite)
+iV = t(chol(V.space))
 
 
 # generate environmental site variable
-envi <- matrix(1:nsite, nrow = 1, ncol = nsite)
-envi <- (envi - mean(envi)) / sd(envi)
+env <- matrix(1:nsite, nrow = 1, ncol = nsite)
+env <- (env - mean(env)) / sd(env)
 
 
 # create data.frame with species, sites, trait, and environmental variable
 dat = data.frame(
   species = rep(phy$tip.label, nsite),
   site = rep(1:nsite, each = nspp),
-  envi = rep(envi, each = nspp),
+  env = rep(env, each = nspp),
   trait = rep(trait, times = nsite)
 )
 
@@ -124,13 +124,13 @@ dat$abund <- y + rnorm(nspp * nsite, sd = sd.resid)
 ############## Analyze simulation dataset #############
 #######################################################
 # z.bayes <- pglmm(
-#   abund ~ 1 + envi + trait + envi:trait +
+#   abund ~ 1 + env + trait + env:trait +
 #     (1 | species__)  + (1|site__) +
-#     (envi | species__) + 
+#     (env | species__) + 
 #     (trait | site) +
 #     (1 | species__@site),
 #   data = dat,
-#   cov_ranef = list(species = phy, site = Vspace),
+#   cov_ranef = list(species = phy, site = V.space),
 #   bayes = T,
 #   verbose = T
 # )
@@ -138,13 +138,13 @@ dat$abund <- y + rnorm(nspp * nsite, sd = sd.resid)
 # 
 if(!file.exists("z.rds")){
   z <- pglmm(
-    abund ~ 1 + envi + trait + envi:trait +
+    abund ~ 1 + env + trait + env:trait +
       (1 | species__) + (1|site__) +
-      (envi | species__) +
+      (env | species__) +
       (trait | site) +
       (1 | species__@site),
     data = dat,
-    cov_ranef = list(species = phy, site = Vspace),
+    cov_ranef = list(species = phy, site = V.space),
     s2.init = c(0, 1, 0, 1, 0, 1, 1, 1),
     verbose = T
   )
@@ -152,10 +152,10 @@ if(!file.exists("z.rds")){
 }
 
 
-# 
+
 # png("designPlot2.png", width = 10, height = 10, units = "in", res = 300)
 # pglmm.plot.re(
-#   x = z.bayes,
+#   x = z,
 #   sp.var = "species",
 #   site.var = "site",
 #   show.image = TRUE,
@@ -166,16 +166,16 @@ if(!file.exists("z.rds")){
 # # finding the optimal `range`
 # z.gaussian <- pglmm(abund ~ 1 + (1 | site__),
 #                     data = dat,
-#                     cov_ranef = list(site = Vspace))
+#                     cov_ranef = list(site = V.space))
 # summary(z.gaussian)
 # # if the ranef `site__` is large, it makes to investigate the value of range
 # for (range in .1 * (1:9)) {
-#   Vspace <- exp(-Dist / range)
-#   rownames(Vspace) <- 1:nsite
-#   colnames(Vspace) <- 1:nsite
+#   V.space <- exp(-Dist / range)
+#   rownames(V.space) <- 1:nsite
+#   colnames(V.space) <- 1:nsite
 #   
 #   z.gaussian <- pglmm(abund ~ 1 + (1 | site__),
 #                       data = dat,
-#                       cov_ranef = list(site = Vspace))
+#                       cov_ranef = list(site = V.space))
 #   show(c(range, z.gaussian$logLik))
 # }
