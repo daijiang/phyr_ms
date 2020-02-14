@@ -53,7 +53,7 @@ Running Title: Model-based phylogenetic analyses
 ^3^ Department of Integrative Biology, University of Wisconsin-Madison, Madison, WI 53706  
 ^4^ Integrative Ecology Lab, Center for Biodiversity, Department of Biology, Temple University, Philadelphia, PA 19122
 
-Emails: daijianglee@gmail.com; r.dinnage@gmail.com; lucas.nell@wisc.edu; mrhelmus@temple.edu; arives@wisc.edu
+Emails: daijianglee@gmail.com; r.dinnage@gmail.com; lucas@lucasnell.com; mrhelmus@temple.edu; arives@wisc.edu
 
 *Summary*
 
