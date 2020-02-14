@@ -237,13 +237,16 @@ No data were used in this study. R code used to simulate data for PGLMMs as desc
 
 To demonstrate the usage of main functions in `phyr`, we simulated a dataset with 30 species and 30 communities. We first simulated a coalescent phylogeny of 30 species with function `ape::rcoal()`. For each species, we then simulated one continuous functional trait along the phylogeny. We also simulated one environmental variable with all 30 communities located evenly along the gradient. The environmental variable, functional trait, and their interaction all determine the abundance of species among sites according to the model below:
 
-$$y=(\beta_{0}+b_{0\_sp}+b_{0\_site})+(\beta_{1}+b_{1})envi+(\beta_{2}+b_{2})trait+\beta_{3}envi*trait+b_{3}+e$$
-$$b_{0\_{sp}}\sim Gaussian(0,\sigma_{0\_{sp}}^{2}\Sigma_{spp})$$
-$$b_{0\_{site}}\sim Gaussian(0,\sigma_{0\_{site}}^{2}\Sigma_{site})$$
-$$b_{1}\sim Gaussian(0,\sigma_{1}^{2}\Sigma_{spp})$$
-$$b_{2}\sim Gaussian(0,\sigma_{2}^{2}I_{site})$$
-$$b_{3}\sim Gaussian(0,\sigma_{3}^{2}\Sigma_{site}\otimes\Sigma_{spp})$$
-$$e\sim Gaussian(0,\sigma_{e}^2)$$
+\begin{align*}
+y = & ~ (\beta_{0}+b_{0\_sp}+b_{0\_site})+(\beta_{1}+b_{1})envi+(\beta_{2}+b_{2})trait+\beta_{3}envi*trait+b_{3}+e \\
+b_{0\_{sp}} \sim & ~ \text{Gaussian}(0,\sigma_{0\_{sp}}^{2}\Sigma_{spp}) \\
+b_{0\_{site}} \sim & ~ \text{Gaussian}(0,\sigma_{0\_{site}}^{2}\Sigma_{site}) \\
+b_{1} \sim & ~ \text{Gaussian}(0,\sigma_{1}^{2}\Sigma_{spp}) \\
+b_{2} \sim & ~ \text{Gaussian}(0,\sigma_{2}^{2}I_{site}) \\
+b_{3} \sim & ~ \text{Gaussian}(0,\sigma_{3}^{2}\Sigma_{site}\otimes\Sigma_{spp}) \\
+e \sim & ~ \text{Gaussian}(0,\sigma_{e}^2)
+\end{align*}
+
 
 We set all coefficients ($\beta_0$ to $\beta_3$) to 1; we also set variances of all random terms to 1. $\Sigma_{spp}$ is a covariance matrix converted from the phylogeny. $\Sigma_{site}$ is a covariance matrix among sites, which was converted from the site spatial distance matrix. $I_{site}$ is the identity matrix so that we treat sites as independent replicates. $\Sigma_{site}\otimes\Sigma_{spp}$ is a matrix generated as a kronecker product, and it makes closely related species more likely to be observed in the same site (i.e. underdispersion). Different species have different overall abundance (intercept) but closely related species ($b_{0\_{sp}}$) and similar communities ($b_{0\_{site}}$) have similar overall abundance. Abundances of different species also change differently along the environmental gradient; however, closely related species change similarly in response to the environmental variable. We included a random term for functional trait; therefore, the relationship between functional trait and species abundance varied across sites independently to account for unmeasured environmental variables. For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model.
 
