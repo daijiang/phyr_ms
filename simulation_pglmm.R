@@ -6,7 +6,7 @@ library(phyr)
 #######################################################
 
 ###### Set up species and site variables
-nspp <- 30
+nspp <- 60
 nsite <- 30
 set.seed(999)
 
@@ -42,7 +42,7 @@ for (i in 1:nsite)
   ((x.coord[i] - x.coord[j]) ^ 2 + (y.coord[i] - y.coord[j]) ^ 2) ^ .5
 
 range <- .25
-sd.space <- 1
+sd.space <- 1 # sd of b0_site
 V.space <- sd.space ^ 2 * exp(-Dist / range)
 rownames(V.space) <- 1:nsite
 colnames(V.space) <- 1:nsite
@@ -67,51 +67,56 @@ dat = data.frame(
 ###### Set up model parameters for simulations
 
 # parameters
-beta0 <- beta1 <- beta2 <- beta3 <- 1 # fixed terms
-sd.b0 <- sd.b1 <- sd.b2 <- sd.b3 <- sd.resid <- 1 # sd of random terms
+beta0 <- beta3 <- 1 # intercept and interaction terms
+beta1 <- beta2 <- 0.5 # main effects of envi and trait
+sd.b0_sp <- sd.resid <- 1 # sd of intercept random term and residual 
+sd.b1_sp <- 1 # sd of envi|sp__
+sd.b2_site <- 1 # sd of trait|site
+sd.b3_nested <- 1 # sd of sp__@site
+# sd of random terms
 
 # whether or not to include phylogenetic signal in B0 and B1
-signal.b0 <- TRUE
-signal.b1 <- TRUE
+signal.b0_sp <- TRUE
+signal.b1_sp <- TRUE
 
 # set up species-specific regression coefficients as random effects
 
-if (signal.b0) {
+if (signal.b0_sp) {
   # this accounts for the scaling of the variance terms by Vphy when det(Vphy) = 1
-  b0 <- rTraitCont(phy, sigma = sd.b0 * Vphy[1,1]^.5) 
-  b0 = b0 - mean(b0)
+  b0_sp <- rTraitCont(phy, sigma = sd.b0_sp * Vphy[1,1]^.5) 
+  b0_sp = b0_sp - mean(b0_sp)
 } else {
-  b0 <- rnorm(nspp, sd = sd.b0)
+  b0_sp <- rnorm(nspp, sd = sd.b0_sp)
 }
 
 b0_site = iV %*% rnorm(nsite, 0, 1)
 b0_site = b0_site - mean(b0_site)
 
-if (signal.b1) {
+if (signal.b1_sp) {
   # this accounts for the scaling of the variance terms by Vphy when det(Vphy) = 1
-  b1 <- rTraitCont(phy, sigma = sd.b1* Vphy[1,1]^.5)
-  b1 = b1 - mean(b1)
+  b1_sp <- rTraitCont(phy, sigma = sd.b1_sp * Vphy[1,1]^.5)
+  b1_sp = b1_sp - mean(b1_sp)
 } else {
-  b1 <- rnorm(nspp, sd = sd.b1)
+  b1_sp <- rnorm(nspp, sd = sd.b1_sp)
 }
-b2 <- rnorm(nsite, sd = sd.b2)
+b2_site <- rnorm(nsite, sd = sd.b2_site)
 
 
 # set up data.frame for parameters
 B <- data.frame(
-  b0 = rep(b0, nsite),
+  b0_sp = rep(b0_sp, nsite),
   b0_site = rep(b0_site, each = nspp),
-  b1 = rep(b1, nsite),
-  b2 = rep(b2, each = nspp)
+  b1_sp = rep(b1_sp, nsite),
+  b2_site = rep(b2_site, each = nspp)
 )
 
 ###### Simulate data
 
-y <- beta0 + B$b0 + B$b0_site +
-  (beta1 + B$b1) * dat$env +
-  (beta2 + B$b2) * dat$trait +
+y <- beta0 + B$b0_sp + B$b0_site +
+  (beta1 + B$b1_sp) * dat$env +
+  (beta2 + B$b2_site) * dat$trait +
   beta3 * dat$env * dat$trait +
-  cholVnested %*% rnorm(nsite * nspp, sd = sd.b3)
+  cholVnested %*% rnorm(nsite * nspp, sd = sd.b3_nested)
 
 # Create both presence-absence and continuous abundance data
 dat$presabs <- rbinom(n = length(y),
@@ -123,17 +128,17 @@ dat$abund <- y + rnorm(nspp * nsite, sd = sd.resid)
 #######################################################
 ############## Analyze simulation dataset #############
 #######################################################
-# z.bayes <- pglmm(
-#   abund ~ 1 + env + trait + env:trait +
-#     (1 | species__)  + (1|site__) +
-#     (env | species__) + 
-#     (trait | site) +
-#     (1 | species__@site),
-#   data = dat,
-#   cov_ranef = list(species = phy, site = V.space),
-#   bayes = T,
-#   verbose = T
-# )
+z.bayes <- pglmm(
+  abund ~ 1 + env + trait + env:trait +
+    (1 | species__)  + (1|site__) +
+    (env | species__) +
+    (trait | site) +
+    (1 | species__@site),
+  data = dat,
+  cov_ranef = list(species = phy, site = V.space),
+  bayes = T,
+  verbose = T
+)
 # saveRDS(z.bayes, "z.bayes.rds")
 # 
 if(!file.exists("z.rds")){
