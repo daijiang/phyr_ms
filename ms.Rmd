@@ -1,16 +1,8 @@
 ---
 title: "`phyr`: An R package for phylogenetic species-distribution modelling in ecological communities"
-author: "Daijiang Li^1^, Russell Dinnage^2^, Lucas Nell^3^, Matthew Helmus^4^, Anthony Ives^3^"
+author: "Daijiang Li^1^, Russell Dinnage^2,3^, Lucas Nell^4^, Matthew R. Helmus^5^, Anthony Ives^4†^"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::html_document2:
-    number_sections: no
-    theme: sandstone
-    toc: yes
-    css: style.css
-    keep_md: no
-  bookdown::word_document2: 
-    toc: no
   bookdown::pdf_document2:
     includes:
       before_body: doc_prefix.tex
@@ -18,6 +10,14 @@ output:
     keep_tex: yes
     latex_engine: pdflatex
     number_sections: no
+    toc: no
+  bookdown::html_document2:
+    number_sections: no
+    theme: sandstone
+    toc: yes
+    css: style.css
+    keep_md: no
+  bookdown::word_document2: 
     toc: no
   bookdown::tufte_html2:
     number_sections: no
@@ -48,12 +48,16 @@ source(file = "simulation_pglmm.R", echo = FALSE, print.eval = FALSE)
 
 Running Title: Model-based phylogenetic analyses
 
+\footnotesize
 ^1^ Department of Wildlife Ecology & Conservation, University of Florida, Gainesville, FL 32611  
-^2^ Macroevolution & Macroecology Group, Research School of Biology, Australian National University, Canberra, ACT, Australia    
-^3^ Department of Integrative Biology, University of Wisconsin-Madison, Madison, WI 53706  
-^4^ Integrative Ecology Lab, Center for Biodiversity, Department of Biology, Temple University, Philadelphia, PA 19122
+^2^ Research School of Biology, Australian National University, Acton ACT 2601, Australia    
+^3^ Institute for Applied Ecology, University of Canberra, Bruce ACT 2617, Australia  
+^4^ Department of Integrative Biology, University of Wisconsin-Madison, Madison, WI 53706  
+^5^ Integrative Ecology Lab, Center for Biodiversity, Department of Biology, Temple University, Philadelphia, PA 19122
 
-Emails: daijianglee@gmail.com; r.dinnage@gmail.com; lucas@lucasnell.com; mrhelmus@temple.edu; arives@wisc.edu
+Emails: daijianglee@gmail.com; r.dinnage@gmail.com; lucas@lucasnell.com; mrhelmus@temple.edu; arives@wisc.edu   
+^†^ Corresponding author
+\normalsize
 
 *Summary*
 
@@ -73,7 +77,9 @@ Just as the distributions of two species might reflect their proximity on a phyl
 
 How species respond to environmental factors, and how they respond to each other, depend on their traits. Therefore, correlations among functional traits can provide insights about the evolutionary history that has shaped species traits so they can occupy the same sites. For example, two insect species that occur in the same lake might share both long-range flight abilities and tolerance to low pH. Is the positive correlation between these two traits caused by correlated selective forces? A challenge to answering this question is that phylogenetic correlations between trait values might reflect species phylogenetic relatedness rather than shared selection: two species might have both long-range flight abilities and tolerance to low pH only because they are phylogenetically closely related. To distinguish between these two explanations -- convergence of suites of traits due to shared selective forces versus similarity due to phylogenetic relatedness -- it is necessary to account for phylogenies when performing correlation analyses between traits that could explain similarities in the distributions of species. 
 
-Statistical models for phylogenetic community composition provide flexible tools for exploring the many possible factors underlying the distribution of species and the composition of communities [@ives2011generalized; @ovaskainen2011; @warton2015so]. The models can describe complex relationships in the data, such as how phylogenetically related species might respond similarly to the same environmental gradient, or how phylogenetically related species might exclude each other from the same communities. They also give a firm statistical basis to test these patterns, the ability to simulate data sets from the fitted model, and the ability to predict the composition of unsurveyed communities. These benefits of phylogenetic community composition models come with costs: building models can be intricate and fitting them computationally slow. The R package `phyr` is designed to overcome many of these costs with a user-friendly interface, flexibility to build a rich collection of models, and good computational performance. Below, we first give a brief overview of the structure and syntax of two key functions `pglmm()` and `cor_phylo()`. `pglmm()` allows the formulation of a diverse set of phylogenetic generalized linear models (PGLMM) that can be used not only to analyze phylogenetic community composition but also comparative models for Gaussian and non-Gaussian data. `cor_phylo()` computes the Pearson correlations among species traits while simultaneously estimating the strength of phylogenetic signal within each trait. We then compare `pglmm()` and `cor_phylo()` to methods and programs that are currently available. Finally, we apply  `pglmm()` and `cor_phylo()` to simulated data to illustrate their implementation and output.
+Statistical models for phylogenetic community composition provide flexible tools for exploring the many possible factors underlying the distribution of species and the composition of communities [@ives2011generalized; @ovaskainen2011; @warton2015so]. The models can describe complex relationships in the data, such as how phylogenetically related species might respond similarly to the same environmental gradient, or how phylogenetically related species might exclude each other from the same communities. They also give a firm statistical basis to test these patterns, the ability to simulate data sets from the fitted model, and the ability to predict the composition of unsurveyed communities. These benefits of phylogenetic community composition models come with costs: building models can be intricate and fitting them computationally slow. 
+
+The R package `phyr` is designed to overcome many of these costs with a user-friendly interface, flexibility to build a rich collection of models, and good computational performance. Below, we first give a brief overview of the structure and syntax of two key functions `pglmm()` and `cor_phylo()`. `pglmm()` allows the formulation of a diverse set of phylogenetic generalized linear models (PGLMM) that can be used not only to analyze phylogenetic community composition but also comparative models for Gaussian and non-Gaussian data. `cor_phylo()` computes the Pearson correlations among species traits while simultaneously estimating the strength of phylogenetic signal within each trait. We then compare `pglmm()` and `cor_phylo()` to methods and programs that are currently available. Finally, we apply  `pglmm()` and `cor_phylo()` to simulated data to illustrate their implementation and output.
 
 # Overview of `phyr` 
 
@@ -110,13 +116,13 @@ pglmm(
 ) 
 ```
 
-Here, Y is a binary (Bernoulli) dependent variable which takes values of either 0 or 1. The specification `family = 'binomial'` allows binary data and also binomial data for which Y is a matrix containing columns for successes and failures. The independent variables `trait` and `env` take on different values for each species and site, respectively. Sites and species (`sp`) are treated as random effects: `(1|site)` implies that a value from a Gaussian random variable is picked for each site, thereby representing unmeasured differences among sites. For the case of species, the double underscore in `(1|sp__)` implies that, in addition to a random effect for species, there is a second random effect which contains the phylogenetic relationships among species (or some other correlation structure specified by the user). The phylogenetic random effect assumes that values for each species are picked from a multivariate Gaussian distribution with phylogenetic covariance matrix $\Sigma$. A covariance matrix $\Sigma$ is specified by `cov_ranef = list(sp = phy.sp, site = V.space)`. The covariance matrix `phy.sp` associated with species can be a `phylo` object from the R package `ape` [@ape2018]. To construct $\Sigma$ from a 'phylo' object, `pglmm()` assumes that the residual variation associated with species follows a Brownian motion model of evolution, so that the covariance between species is proportional to their shared evolutionary history (e.g., shared branch length on a phylogeny). It is also possible to specify an explicit covariance matrix, such as `site = V.space`, where `V.space` is a covariance matrix created from the distance between sites.
+Here, Y is a binary (Bernoulli) dependent variable which takes values of either 0 or 1. The specification `family = 'binomial'` allows binary data and also binomial data for which Y is a matrix containing columns for successes and failures. The independent variables `trait` and `env` take on different values for each species and site, respectively. Sites (`site`) and species (`sp`) are treated as random effects: `(1|site)` implies that a value from a Gaussian random variable is picked for each site, thereby representing unmeasured differences among sites. For the case of species, the double underscore in `(1|sp__)` implies that, in addition to a random effect for species, there is a second random effect which contains the phylogenetic relationships among species (or some other correlation structure specified by the user). The phylogenetic random effect assumes that values for each species are picked from a multivariate Gaussian distribution with phylogenetic covariance matrix $\Sigma$. A covariance matrix $\Sigma$ is specified by `cov_ranef = list(sp = phy.sp, site = V.space)`. The covariance matrix `phy.sp` associated with species can be a `phylo` object from the R package `ape` [@ape2018]. To construct $\Sigma$ from a 'phylo' object, `pglmm()` assumes that the residual variation associated with species follows a Brownian motion model of evolution, so that the covariance between species is proportional to their shared evolutionary history (e.g., shared branch length on a phylogeny). It is also possible to specify an explicit covariance matrix, such as `site = V.space`, where `V.space` is a covariance matrix created from the distance between sites.
 
-The syntax `(1|sp__)` or  `(1|site__)` generates two random effects, one without and one with phylogenetic or spatial covariances; in contrast, `(1|sp)` would generate only a single random effect that is independent among species. `pglmm()` forces in a term for `(1|sp)` whenever `(1|sp__)` is specified, because otherwise any difference among species would be captured by the diagonal elements in $\Sigma$ even in the absence of covariances among phylogenetically related species which are specified by the off-diagonal elements of $\Sigma$. Therefore, if `(1|sp)` were not included, this could lead to the identification of phylogenetic signal in the abundances of species even in its absence. To account for differences among sites in how they select for species with different traits, `(trait|site)` allows the slope of Y against `trait` to be a Gaussian random variable. Similarly, to account for the differences among species for how they respond to `env`, `(env|sp__)` allows the relationship of Y against `env` to be given by two slopes, the first slope that is picked from a Gaussian random variable in which species are independent and the second slope that is picked from a multivariate Gaussian with covariance matrix $\Sigma$. Finally, `(1|sp__@site)` generates a nested term: within a site, the residual variation in Y shows phylogenetic relatedness, with phylogenetically related species more likely to occur in the same site. Note that `(1|sp__)` differs from `(1|sp__@site)` because `(1|sp__)` generates differences in the mean value of Y for species across all sites, whereas `(1|sp__@site)` is local to sites, giving the covariances among species only within sites. This nested term can be used to test for community clustering or overdispersion [@webb2002phylogenies; @ives2011generalized]. Other forms of a nested term are available in `pglmm()`, which can be used to study more complicated questions such as bipartite networks.
+The syntax `(1|sp__)` or  `(1|site__)` generates two random effects, one without and one with phylogenetic or spatial covariances; in contrast, `(1|sp)` would generate only a single random effect that is independent among species. `pglmm()` forces in a term for `(1|sp)` whenever `(1|sp__)` is specified, because otherwise any difference among species would be captured by the diagonal elements in $\Sigma$ even in the absence of covariances among phylogenetically related species which are specified by the off-diagonal elements of $\Sigma$. Therefore, if `(1|sp)` were not included, this could lead to the identification of phylogenetic signal in the abundances of species even in its absence from a community. To account for differences among sites in how they select for species with different traits, `(trait|site)` allows the slope of Y against `trait` to be a Gaussian random variable. Similarly, to account for the differences among species for how they respond to `env`, `(env|sp__)` allows the relationship of Y against `env` to be given by two slopes, the first slope that is picked from a Gaussian random variable in which species are independent and the second slope that is picked from a multivariate Gaussian with covariance matrix $\Sigma$. Finally, `(1|sp__@site)` generates a nested term: within a site, the residual variation in Y shows phylogenetic relatedness, with phylogenetically related species more likely to occur in the same site. Note that `(1|sp__)` differs from `(1|sp__@site)` because `(1|sp__)` generates differences in the mean value of Y for species across all sites, whereas `(1|sp__@site)` is local to sites, giving the covariances among species only within sites. This nested term can be used to test for community clustering or overdispersion [@webb2002phylogenies; @ives2011generalized]. Other forms of a nested term are available in `pglmm()`, which can be used to study more complicated questions such as bipartite networks.
 
 With `bayes = FALSE`, `pglmm()` is fitted using a frequentist approach. ML or REML is used for fitting, with `REML = TRUE` as the default. For a non-Gaussian model (e.g., `family = 'binomial'`), an iterated quasi-likelihood method is used for model fitting which gives the approximate likelihood; p-values for the fixed effects are given by a Wald test and for the random effects by profile likelihood, although we recommend bootstrap-based tests when computationally feasible. Note that `REML = TRUE` is an option for non-Gaussian models (in contrast to `glmer()`) due to the algorithm used. With `bayes = TRUE`, a Bayesian approach is implemented using INLA [@rue2009approximate], which gives parameter estimates and credible intervals. For large problems with the number of species-site combinations exceeding 2000, the Bayesian computations are considerably faster than the frequentist computations. Finally, a key to interpreting the results from a model is understanding the structure of the covariance matrices associated with the random effects. Therefore, `pglmm()` has associated plotting functions `pglmm_plot_ranef()` that present the design matrices for the random effects (Fig. \@ref(fig:designPlot)).  
 
-(ref:designPlotCap) The structures of design matrices of random terms in a phylogenetic generalized linear mixed model with `r nspp` species and `r nsite` sites.
+(ref:designPlotCap) The structures of design matrices of random terms in a phylogenetic generalized linear mixed model with `r nspp` species and `r nsite` sites. Random terms `1|sp` and `1|site` allow different species or sites to have different intercepts, respectively. Random terms `1|sp__` and `1|site` allow closely related species or sites with similar conditions to have similar intercepts, respectively. Random term `env|sp` allows different species to have different environment-abundance relationships independently. Random term `1|sp__@site` is a nested term and allows closely related species more likely to occur in the same site.
 
 ```{r designPlot, echo = F, fig.cap="(ref:designPlotCap)", out.width="100%"}
 knitr::include_graphics(normalize_path("designPlot2.png"))
@@ -166,20 +172,19 @@ The R package `mvMORPH` [@clavel2015mvmorph] can fit a broad range of models, of
 
 # Example usage
 
-We simulated datasets to demonstrate how to use `pglmm()` and `cor_phylo()`. Details about simulations can be found in the Appendix. Our goal in this section is to provide some general ideas about the inputs and outputs of these two functions instead of testing their statistical performances or interpreting the ecological meanings of model results. For those purposes, please see the package vignettes and @ives2018book.
+We simulated datasets to demonstrate how to use `pglmm()` and `cor_phylo()`. Details about simulations of PGLMM can be found in the Appendix. Our goal in this section is to provide some general ideas about the inputs and outputs of these two functions instead of testing their statistical performances or interpreting the ecological meanings of model results. For those purposes, please see the package vignettes and @ives2018book.
 
 ## _`pglmm()`_
 
-We fitted a PGLMM that examined how a hypothetical functional trait, environmental gradient, and their interaction affect distributions of `r nspp` species across `r nsite` sites. We focused on abundance and used the default family of data distribution (Gaussian), but other distributions can also be specified by resetting the `family` argument. Phylogenetic relationships among species and site spatial autocorrelations are specified by `cov_ranef = list(species = phy, site = V.space)` where `species` and `site` are group variables of random terms, `phy` can be a phylogeny with class `phylo` or a phylogenetic covariance matrix, `Vspace` is a variance-covriance matrix among sites. This model can also be fitted with Bayesian framework by setting `bayes = TRUE`, which is recommended when data set is large.
+We fitted a PGLMM that examined how a hypothetical functional trait, environmental gradient, and their interaction affect distributions of `r nspp` species across `r nsite` sites. We focused on abundance and used the default family of data distribution (Gaussian), but other distributions can also be specified by resetting the `family` argument. Phylogenetic relationships among species and site spatial autocorrelations are specified by `cov_ranef = list(sp = phy, site = V.space)` where `sp` and `site` are group variables of random terms, `phy` can be a phylogeny with class `phylo` or a phylogenetic covariance matrix, `Vspace` is a covriance matrix among sites. This model can also be fitted with Bayesian framework by setting `bayes = TRUE`, which is recommended when data set is large.
 
 ```{r, eval=FALSE}
 z <- pglmm(
   abund ~ 1 + env + trait + env:trait +
-    (1 | species__)  + (1 | site__) + 
-    (env | species__) + (trait | site) +
-    (1 | species__@site),
+    (1 | sp__)  + (1 | site__) + 
+    (env | sp) + (1 | sp__@site),
   data = dat, 
-  cov_ranef = list(species = phy, site = V.space)
+  cov_ranef = list(sp = phy, site = V.space)
 )
 ```
 
@@ -215,7 +220,7 @@ The output of `cor_phylo()` includes log-likelihood values, AIC, BIC, estimated 
 
 # Closing remarks
 
-In recent years, there has been increasing effort to apply model-based approaches in community ecology. An example is the rise of joint species distribution models. Despite the well-known importance of phylogenetic relationships in structuring species distributions and community composition, relatively few studies have incorporated phylogenetic relationships in model-based analyses of species distributions and community ecology. A potential reason is the lack of easy-to-use tools to facilitate the use of phylogenetic species-distribution modeling in ecological communities. The package `phyr` fills this gap by providing implementations of phylogenetic species-distribution models with flexible model formula syntax (`pglmm()`). It also includes other model-based functions that are useful for ecological studies such as estimating correlations among functional traits while accounting for their evolutionary history (`cor_phylo()`) and calculating community phylogenetic diversity (e.g. `psv()`) (Table \@ref(tab:mainFunc)). 
+In recent years, there has been increasing effort to apply model-based approaches in community ecology. Despite the well-known importance of phylogenetic relationships in structuring species distributions and community composition, relatively few studies have incorporated phylogenetic relationships in model-based analyses of species distributions and community ecology. A potential reason is the lack of easy-to-use tools to facilitate the use of phylogenetic species-distribution modeling in ecological communities. The package `phyr` fills this gap by providing implementations of phylogenetic species-distribution models with flexible model formula syntax (`pglmm()`). It also includes other model-based functions that are useful for ecological studies such as estimating correlations among functional traits while accounting for their evolutionary history (`cor_phylo()`) and calculating community phylogenetic diversity (e.g. `psv()`) (Table \@ref(tab:mainFunc)). 
 
 The model formula of `pglmm()` is general and can be applied using other tools to fit phylogenetic species-distribution models. Thus, `pglmm()` can serve the developer community as a shell for new methods that fit GLMMs, with `phyr` providing an easy user interface. Using INLA as a backend to fit a Bayesian version of the PGLMM model is an example of this approach. To facilitate this end, we are developing phyr openly on github and actively encourage community contribution. We hope that the `phyr` package will help current and future researchers formulate and analyze phylogenetic species-distribution models.
 
@@ -231,25 +236,29 @@ D.L and A.R.I conceived the idea. All authors wrote the software and package doc
 
 No data were used in this study. R code used to simulate data for PGLMMs as described in the Appendix is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_pglmm.R>. R code used to simulate data for comparative methods is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_cor_phylo.R>. `phyr` is available at Github (https://github.com/daijiang/phyr) and CRAN (https://cran.r-project.org/package=phyr).
 
-\clearpage
+<!-- \clearpage -->
 
 # Appendix 
 
-To demonstrate the usage of main functions in `phyr`, we simulated a dataset with 30 species and 30 communities. We first simulated a coalescent phylogeny of 30 species with function `ape::rcoal()`. For each species, we then simulated one continuous functional trait along the phylogeny. We also simulated one environmental variable with all 30 communities located evenly along the gradient. The environmental variable, functional trait, and their interaction all determine the abundance of species among sites according to the model below:
+To demonstrate the usage of main functions in `phyr`, we simulated a dataset with `r nspp` species and `r nsite` communities. We first simulated a coalescent phylogeny of `r nspp` species with function `ape::rcoal()`. For each species, we then simulated one continuous functional trait along the phylogeny. We also simulated one environmental variable with all `r nsite` communities located evenly along the gradient. The environmental variable, functional trait, and their interaction all determine the abundance of species among sites according to the model below:
 
 \begin{align*}
-y = & ~ (\beta_{0}+b_{0\_sp}+b_{0\_site})+(\beta_{1}+b_{1})envi+(\beta_{2}+b_{2})trait+\beta_{3}envi*trait+b_{3}+e \\
+y = & ~ (\beta_{0}+b_{0\_sp}+b_{0\_site})+(\beta_{1}+b_{1})envi+\beta_{2}trait+\beta_{3}envi*trait+b_{2}+e \\
 b_{0\_{sp}} \sim & ~ \text{Gaussian}(0,\sigma_{0\_{sp}}^{2}\Sigma_{spp}) \\
 b_{0\_{site}} \sim & ~ \text{Gaussian}(0,\sigma_{0\_{site}}^{2}\Sigma_{site}) \\
-b_{1} \sim & ~ \text{Gaussian}(0,\sigma_{1}^{2}\Sigma_{spp}) \\
-b_{2} \sim & ~ \text{Gaussian}(0,\sigma_{2}^{2}I_{site}) \\
-b_{3} \sim & ~ \text{Gaussian}(0,\sigma_{3}^{2}\Sigma_{site}\otimes\Sigma_{spp}) \\
+b_{1} \sim & ~ \text{Gaussian}(0,\sigma_{1}^{2}I_{spp}) \\
+b_{2} \sim & ~ \text{Gaussian}(0,\sigma_{3}^{2}\Sigma_{site}\otimes\Sigma_{spp}) \\
 e \sim & ~ \text{Gaussian}(0,\sigma_{e}^2)
 \end{align*}
 
 
-We set all coefficients ($\beta_0$ to $\beta_3$) to 1; we also set variances of all random terms to 1. $\Sigma_{spp}$ is a covariance matrix converted from the phylogeny. $\Sigma_{site}$ is a covariance matrix among sites, which was converted from the site spatial distance matrix. $I_{site}$ is the identity matrix so that we treat sites as independent replicates. $\Sigma_{site}\otimes\Sigma_{spp}$ is a matrix generated as a kronecker product, and it makes closely related species more likely to be observed in the same site (i.e. underdispersion). Different species have different overall abundance (intercept) but closely related species ($b_{0\_{sp}}$) and similar communities ($b_{0\_{site}}$) have similar overall abundance. Abundances of different species also change differently along the environmental gradient; however, closely related species change similarly in response to the environmental variable. We included a random term for functional trait; therefore, the relationship between functional trait and species abundance varied across sites independently to account for unmeasured environmental variables. For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model.
+We set all coefficients ($\beta_0$ to $\beta_3$) to 1; we also set variances of all random terms to 1. $\Sigma_{spp}$ is a covariance matrix converted from the phylogeny. $\Sigma_{site}$ is a covariance matrix among sites, which was converted from the site spatial distance matrix. $I_{spp}$ is the identity matrix so that we treat species as independent replicates. $\Sigma_{site}\otimes\Sigma_{spp}$ is a matrix generated as a kronecker product, and it makes closely related species more likely to be observed in the same site (i.e. underdispersion). Different species have different overall abundance (intercept) but closely related species ($b_{0\_{sp}}$) and similar communities ($b_{0\_{site}}$) have similar overall abundance. Abundances of different species also change differently along the environmental gradient. 
 
-\clearpage
+For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model. 
+
+<!-- We can also make closely related species change similarly in response to the environmental variable. Furthermore, we can include a random term for functional trait to allow the relationship between functional trait and species abundance vary across sites independently to account for unmeasured environmental variables.  -->
+
+
+<!-- \clearpage -->
 
 # References
