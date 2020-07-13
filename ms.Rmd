@@ -1,6 +1,6 @@
 ---
 title: "`phyr`: An R package for phylogenetic species-distribution modelling in ecological communities"
-author: "Daijiang Li^1^, Russell Dinnage^2,3^, Lucas Nell^4^, Matthew R. Helmus^5^, Anthony Ives^4†^"
+author: "Daijiang Li^1^, Russell Dinnage^2,3^, Lucas Nell^4^, Matthew R. Helmus^5^, Anthony R. Ives^4†^"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::pdf_document2:
@@ -33,15 +33,22 @@ bibliography: ref.bib
 ```{r knitr_options, include = FALSE}
 if(!require("xfun")) install.packages("xfun")
 if(!require("phyr")) devtools::install_github("daijiang/phyr")
-xfun::pkg_attach2(c("phyr", "knitr", "kableExtra", "kableExtra", "tidyverse"))
+xfun::pkg_attach2(c("phyr", "knitr", "tidyverse"))
 # opts_knit$set(root.dir = normalizePath("../"))
 opts_chunk$set(fig.align='center', cache = TRUE, warning = FALSE, 
                message = FALSE, echo = TRUE)
-options(digits = 3, width = 88, knitr.kable.NA = '')
+options(digits = 3, width = 88, knitr.kable.NA = '', 
+        knitr.graphics.auto_pdf = TRUE)
 tpl_1 = 'https://raw.githubusercontent.com/daijiang/workflow_demo/master/template/preamble.tex'
 tpl_2 = 'https://raw.githubusercontent.com/daijiang/workflow_demo/master/template/doc_prefix.tex'
 if(!file.exists(tpl_1f <- 'preamble.tex')) download.file(tpl_1, tpl_1f)
 if(!file.exists(tpl_2f <- 'doc_prefix.tex')) download.file(tpl_2, tpl_2f)
+if(knitr::is_latex_output() | knitr::is_html_output()){
+  library(kableExtra)
+} else {
+  options(kableExtra.auto_format = FALSE) # for docx
+}
+
 # traits, phy, dat
 source(file = "simulation_pglmm.R", echo = FALSE, print.eval = FALSE)
 ```
@@ -61,7 +68,7 @@ Emails: daijianglee@gmail.com; r.dinnage@gmail.com; lucas@lucasnell.com; mrhelmu
 
 *Summary*
 
-1. Model-based approaches are increasingly popular in ecological studies. A good example of this trend is the use of joint species distribution models to ask questions about ecological communities. However, most current applications of model-based methods do not include phylogenies despite the well-known importance of phylogenetic relationships in shaping species distributions and community composition. In part, this is due to lack of accessible tools allowing ecologists to fit phylogenetic species distribution models easily.
+1. Model-based approaches are increasingly popular in ecological studies. A good example of this trend is the use of joint species distribution models to ask questions about ecological communities. However, most current applications of model-based methods do not include phylogenies despite the well-known importance of phylogenetic relationships in shaping species distributions and community composition. In part, this is due to a lack of accessible tools allowing ecologists to fit phylogenetic species distribution models easily.
 2. To fill this gap, the R package `phyr` (pronounced fire) implements a suite of metrics, comparative methods and mixed models that use phylogenies to understand and predict community composition and other ecological and evolutionary phenomena. The `phyr` workhorse functions are implemented in C++ making all calculations and model estimations fast.
 3. `phyr` can fit a variety of models such as phylogenetic joint-species distribution models, spatiotemporal-phylogenetic autocorrelation models, and phylogenetic trait‐based bipartite network models. `phyr` also estimates phylogenetically independent trait correlations with measurement error to test for adaptive syndromes and performs fast calculations of common alpha and beta phylogenetic diversity metrics. All `phyr` methods are united under Brownian motion or Ornstein-Uhlenbeck models of evolution and phylogenetic terms are modelled as phylogenetic covariance matrices.
 4. The functions and model formula syntax we propose in `phyr` serves as a simple and unified framework that ignites the use of phylogenies to address a variety of ecological questions.
@@ -176,7 +183,7 @@ We simulated datasets to demonstrate how to use `pglmm()` and `cor_phylo()`. Det
 
 ## _`pglmm()`_
 
-We fitted a PGLMM that examined how a hypothetical functional trait, environmental gradient, and their interaction affect distributions of `r nspp` species across `r nsite` sites. We focused on abundance and used the default family of data distribution (Gaussian), but other distributions can also be specified by resetting the `family` argument. Phylogenetic relationships among species and site spatial autocorrelations are specified by `cov_ranef = list(sp = phy, site = V.space)` where `sp` and `site` are group variables of random terms, `phy` can be a phylogeny with class `phylo` or a phylogenetic covariance matrix, `Vspace` is a covriance matrix among sites. This model can also be fitted with Bayesian framework by setting `bayes = TRUE`, which is recommended when data set is large.
+We fitted a PGLMM that examined how a hypothetical functional trait, environmental gradient, and their interaction affect distributions of `r nspp` species across `r nsite` sites. We focused on abundance and used the default family of data distribution (Gaussian), but other distributions can also be specified by resetting the `family` argument. Phylogenetic relationships among species and site spatial autocorrelations are specified by `cov_ranef = list(sp = phy, site = V.space)` where `sp` and `site` are group variables of random terms, `phy` can be a phylogeny with class `phylo` or a phylogenetic covariance matrix, `Vspace` is a covariance matrix among sites. This model can also be fitted with Bayesian framework by setting `bayes = TRUE`, which is recommended when data set is large.
 
 ```{r, eval=FALSE}
 z <- pglmm(
