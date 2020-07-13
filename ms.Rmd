@@ -155,7 +155,7 @@ cor_phylo(
 )
 ```
 
-In this example, the correlation between `trait1` and `trait2` is computed, and the column named `sp` in `data` identifies the species. The object `phy.sp` specifies the phylogenetic covariance matrix as a 'phylo' object from the `ape` package. `cor_phylo()` estimates the phylogenetic signal for each trait by assuming that trait evolution is given by a Ornstein-Uhlenbeck process. The term `covariates = list(trait1 ~ env)` includes the independent variable `env` for `trait1`, to remove possible confounding effects; only an intercept is estimated if no covariate is provided for a trait. Within-species variation is specified by `meas_errors = list(trait1 ~ me1, trait2 ~ me2)`, where `me1` and `me2` are the standard errors for `trait1` and  `trait2`, respectively, of values at the tips of the phylogenetic tree. If within-species standard errors are not provided for a given trait, the trait values are assumed to be known without error. Finally, `cor_phylo()` can perform parametric bootstrapping to give confidence intervals for all parameter estimates: correlations, phylogenetic signals, covariate coefficients, and coefficient covariances.
+In this example, the correlation between `trait1` and `trait2` is computed, and the column named `sp` in `data` identifies the species. The object `phy.sp` specifies the phylogenetic covariance matrix as a 'phylo' object from the `ape` package. `cor_phylo()` estimates the phylogenetic signal for each trait by assuming that trait evolution is given by a Ornstein-Uhlenbeck process. The term `covariates = list(trait1 ~ env)` includes the independent variable `env` for `trait1`, to remove possible confounding effects; only an intercept is estimated if no covariate is provided for a trait. Covariates are linear terms fit using ML or REML with the rest of the model. Within-species variation is specified by `meas_errors = list(trait1 ~ me1, trait2 ~ me2)`, where `me1` and `me2` are the standard errors for `trait1` and  `trait2`, respectively, of values at the tips of the phylogenetic tree. If within-species standard errors are not provided for a given trait, the trait values are assumed to be known without error. Finally, `cor_phylo()` can perform parametric bootstrapping to give confidence intervals for all parameter estimates: correlations, phylogenetic signals, covariate coefficients, and coefficient covariances.
 
 # Relationships to other methods and software
 
@@ -208,7 +208,7 @@ The summary of model results includes the model fitting method (maximum likeliho
 
 ## *`cor_phylo()`*
 
-Here, we simulated two hypothetical functional traits (`trait_1` and `trait_2`) for 50 species. We set the true correlation between these two traits to be 0.7 and their phylogenetic signals to be 0.3 and 0.95, respectively. We also set their measurement errors to be 0.2 and 1, respectively.
+Here, we simulated two hypothetical functional traits (`trait_1` and `trait_2`) for 50 species. We set the true correlation between these two traits to be 0.7 and their phylogenetic signals (via an Ornstein-Uhlenbeck process) to be 0.3 and 0.95, respectively. We also set their measurement errors to be 0.2 and 1, respectively, and assigned the covariate `cov_trait_2` to `trait_2` with a slope of 1.
 
 ```{r echo=FALSE}
 source("simulation_cor_phylo.R")
