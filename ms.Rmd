@@ -241,7 +241,7 @@ D.L and A.R.I conceived the idea. All authors wrote the software and package doc
 
 # Data Accessibility
 
-No data were used in this study. R code used to simulate data for PGLMMs as described in the Appendix is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_pglmm.R>. R code used to simulate data for comparative methods is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_cor_phylo.R>. `phyr` is available at Github (https://github.com/daijiang/phyr) and CRAN (https://cran.r-project.org/package=phyr).
+No data were used in this study. R code used to simulate data for PGLMMs as described in the Appendix is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_pglmm.R>. R code used to simulate data for comparative methods is available at <https://github.com/daijiang/phyr_ms/blob/master/simulation_cor_phylo.R>. `phyr` is available at Github (https://github.com/daijiang/phyr) and CRAN (https://cran.r-project.org/package=phyr). Its documentations are available at <https://daijiang.github.io/phyr/index.html>.
 
 <!-- \clearpage -->
 
@@ -261,7 +261,7 @@ e \sim & ~ \text{Gaussian}(0,\sigma_{e}^2)
 
 We set all coefficients ($\beta_0$ to $\beta_3$) to 1; we also set variances of all random terms to 1. $\Sigma_{spp}$ is a covariance matrix converted from the phylogeny. $\Sigma_{site}$ is a covariance matrix among sites, which was converted from the site spatial distance matrix. $I_{spp}$ is the identity matrix so that we treat species as independent replicates. $\Sigma_{site}\otimes\Sigma_{spp}$ is a matrix generated as a kronecker product, and it makes closely related species more likely to be observed in the same site (i.e. underdispersion). Different species have different overall abundance (intercept) but closely related species ($b_{0\_{sp}}$) and similar communities ($b_{0\_{site}}$) have similar overall abundance. Abundances of different species also change differently along the environmental gradient. 
 
-For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model. 
+For demonstration purposes, we only simulated one functional trait and one environmental variable; in real datasets, multiple environmental variables and multiple functional traits can be included in the model. For examples using `pglmm()` to analyse empirical dataset, see the package vignette (<https://daijiang.github.io/phyr/articles/phyr_example_empirical.html>).
 
 <!-- We can also make closely related species change similarly in response to the environmental variable. Furthermore, we can include a random term for functional trait to allow the relationship between functional trait and species abundance vary across sites independently to account for unmeasured environmental variables.  -->
 
